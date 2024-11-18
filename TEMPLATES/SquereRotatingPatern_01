@@ -27,7 +27,14 @@ Color::Color colors[20] = {Color::Black, Color::Red, Color::Green, Color::Yellow
 int main()
 {
 
-    Object *object = new Rectangle(0, HEIGHT / 2, 30, 30, Color::White);
+    Object *object[100];
+
+    int obj_count = 30;
+
+    for(int i = 0; i < obj_count; i++)
+    {
+        object[i] = new Rectangle(WIDTH / 2.f, HEIGHT / 2.f, obj_count / 5 + 5 * i, obj_count / 5 + 5 * i, colors[i % 14]);
+    }
 
 	int curentKey;
     bool running = true;
@@ -41,13 +48,15 @@ int main()
 
 		curentKey = 0;
 
-        object->Rotate(0.4f);
-        object->Move(Vector2(10.f, 0));
-        object->Scale(Vector2(-0.08f, -0.08f));
+        for(int i = 0; i < obj_count; i++)
+        { 
+            object[i]->Rotate(0.07f * ((1 + i) * 0.05f)); 
+        }
 
-        screen.Clear(Color::Black);
+        screen.Clear();
 
-        object->Draw(screen);
+        for(int i = 0; i < obj_count; i++)
+            object[i]->Draw(screen);
 
         screen.Display();
 
