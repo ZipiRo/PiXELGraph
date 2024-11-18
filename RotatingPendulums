@@ -1,0 +1,63 @@
+int main()
+{
+	int curentKey;
+
+    float angle = 0;
+	float anglee = 0;
+	float angleee = 0;
+	float angleeee = 0;
+	float angleeeee = 0;
+    while (true)
+    {   
+		if (_kbhit())
+			curentKey = _getch();
+
+		if (curentKey == 32) CLEAR_CONSOLE
+
+		curentKey = 0;
+
+    	FillScreen();
+
+		int rx = 50, ry = 50; 
+		int x = WIDTH / 2, y = HEIGHT / 2;
+		int sx = rx, sy = ry;
+		angle += 0.1f;
+		int dx = sin(angle) * sx;
+		int dy = cos(angle) * sy;
+        Line(x, y, dx + x, dy + y, Color::Red);
+
+		x = dx + x, y = dy + y;
+		sx = sx / 2, sy = sy / 2;
+		anglee += 0.2f;
+		dx = sin(anglee) * sx;
+		dy = cos(anglee) * sy;
+		Line(x, y, dx + x, dy + y, Color::Blue);
+
+		x = dx + x, y = dy + y;
+		sx = sx / 2, sy = sy / 2;
+		angleee += 0.3f;
+		dx = sin(angleee) * sx;
+		dy = cos(angleee) * sy;
+		Line(x, y, dx + x, dy + y, Color::Green);
+
+		x = dx + x, y = dy + y;
+		sx = sx / 2, sy = sy / 2;
+		angleeee += 0.4f;
+		dx = sin(angleeee) * sx;
+		dy = cos(angleeee) * sy;
+		Line(x, y, dx + x, dy + y, Color::Cyan);
+		
+		x = dx + x, y = dy + y;
+		sx = sx / 2, sy = sy / 2;
+		angleeeee += 0.5f;
+		dx = sin(angleeeee) * sx;
+		dy = cos(angleeeee) * sy;
+		Line(x, y, dx + x, dy + y, Color::Black);
+
+        DrawScreen();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    return 0;
+}

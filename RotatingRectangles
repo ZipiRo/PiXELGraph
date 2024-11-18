@@ -1,0 +1,44 @@
+int main()
+{
+	Rectangle a {260, 150, 40, 40, CreateRectangleVertices(a.width, a.height)};
+	Rectangle b {40, 59, 30, 40, CreateRectangleVertices(b.width, b.height)};
+	Rectangle c {100, 200, 50, 10, CreateRectangleVertices(c.width, c.height)};
+	Rectangle d {240, 50, 50, 30, CreateRectangleVertices(d.width, d.height)};
+	Rectangle e {WIDTH / 2, HEIGHT / 2, 20, 20, CreateRectangleVertices(e.width, e.height)};
+
+	int curentKey;
+	bool running = true;
+    while (running)
+    {   
+		if (_kbhit())
+			curentKey = _getch();
+
+		if (curentKey == Key::SPACE) CLEAR_CONSOLE
+		if (curentKey == Key::ESCAPE) running = false;
+
+		curentKey = 0;
+
+    	FillScreen();
+
+		a.vertices = RotateZ(a.vertices, 0.1f);
+		DrawRectangle(a.x, a.y, a.vertices, Color::Red);
+		
+		b.vertices = RotateZ(b.vertices, 0.2f);
+		DrawRectangle(b.x, b.y, b.vertices, Color::Green);
+
+		c.vertices = RotateZ(c.vertices, 0.35f);
+		DrawRectangle(c.x, c.y, c.vertices, Color::Blue);
+		
+		d.vertices = RotateZ(d.vertices, 0.375f);
+		DrawRectangle(d.x, d.y, d.vertices, Color::Purple);
+
+		e.vertices = RotateZ(e.vertices, 0.25f);
+		DrawRectangle(e.x, e.y, e.vertices, Color::Cyan);
+
+        DrawScreen();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    return 0;
+}
