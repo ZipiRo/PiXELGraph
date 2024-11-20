@@ -3,7 +3,7 @@
 class Transform
 {
 private:
-    float sinTheta, cosTheta;
+    float sin0 = 0.f, cos0 = 1.f;
 
 public:
     Vector2 position;
@@ -14,7 +14,7 @@ public:
     Transform(float x, float y, float scale_x, float scale_y, float angle);
 
     Vector2 TransformVertex(Vector2 vertex);
-    void ThetaUpdate();
+    void SinCosUpdate();
 };
 
 Transform::Transform()
@@ -31,10 +31,10 @@ Transform::Transform(float x, float y, float scale_x, float scale_y, float angle
     this->angle = angle;
 }
 
-void Transform::ThetaUpdate()
+void Transform::SinCosUpdate()
 {
-    this->sinTheta = sinf(this->angle);
-    this->cosTheta = cosf(this->angle);
+    this->sin0 = sin(this->angle);
+    this->cos0 = cos(this->angle);
 }
 
 Vector2 Transform::TransformVertex(Vector2 vertex)
@@ -42,8 +42,8 @@ Vector2 Transform::TransformVertex(Vector2 vertex)
     float sx = vertex.x * this->scale.x;
     float sy = vertex.y * this->scale.y;
 
-    float rx = this->cosTheta * sx - this->sinTheta * sy;
-    float ry = this->sinTheta * sx + this->cosTheta * sy;
+    float rx = this->cos0 * sx - this->sin0 * sy;
+    float ry = this->sin0 * sx + this->cos0 * sy;
 
     float tx = rx + this->position.x;
     float ty = ry + this->position.y;

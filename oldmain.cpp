@@ -7,8 +7,8 @@
 #include <cmath>
 #include <conio.h>
 
-const int WIDTH = 160;
-const int HEIGHT = 120;
+const int WIDTH = 120;
+const int HEIGHT = 90;
 
 // 432x240 / 320x240 / 160x120 / 100x100 / 120x90 //
 // CMD Line height = 0.6 //
@@ -217,20 +217,24 @@ void DrawRectangle(int x, int y, const std::vector<Point> &vertices, Color::Colo
 
 int main()
 {
+	Rectangle a {WIDTH / 2, HEIGHT / 2, 20, 20, CreateRectangleVertices(a.width, a.height)};
+	
 	int curentKey;
-	int running = true;
-
+	bool running = true;
     while (running)
     {   
 		if (_kbhit())
 			curentKey = _getch();
 
-		if (curentKey == 32) CLEAR_CONSOLE
-		if (curentKey == Key::ESCAPE) running = false; 
+		if (curentKey == Key::SPACE) CLEAR_CONSOLE
+		if (curentKey == Key::ESCAPE) running = false;
 
 		curentKey = 0;
 
     	FillScreen();
+
+		a.vertices = RotateZ(a.vertices, .05f);
+		DrawRectangle(a.x, a.y, a.vertices, Color::Red);
 
         DrawScreen();
 

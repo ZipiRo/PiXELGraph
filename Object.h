@@ -4,14 +4,13 @@ class Object
 {
 protected:
     Transform transform;
-    float width, height;
 
     Color::Color color;
 
     bool UPDATE_VERTICES = true;
          
 public:
-    Object();
+    Object() {}
 
     virtual void Draw(Screen &screen) = 0;
 
@@ -22,12 +21,6 @@ public:
     void Scale(Vector2 amount);
     void ScaleTo(Vector2 scale);
 };
-
-Object::Object()
-{
-    this->width = 0;
-    this->height = 0;
-}
 
 void Object::ScaleTo(Vector2 scale)
 {

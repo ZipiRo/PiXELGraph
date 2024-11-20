@@ -21,7 +21,7 @@ std::vector<Vector2> UpdateVertices(Transform transfrom, const std::vector<Vecto
 {
     std::vector<Vector2> T_vertices;
 
-    transfrom.ThetaUpdate();
+    transfrom.SinCosUpdate();
 
     for(const Vector2 &vertex : vertices)
         T_vertices.emplace_back(transfrom.TransformVertex(vertex));
@@ -32,6 +32,7 @@ std::vector<Vector2> UpdateVertices(Transform transfrom, const std::vector<Vecto
 class Rectangle : public Object
 {
 private:
+    float width, height;
     std::vector<Vector2> vertices;
     std::vector<Vector2> T_vertices;
 
@@ -69,6 +70,6 @@ void Rectangle::Draw(Screen &screen)
 
 		DrawLine(screen, vertexA.x, vertexA.y, vertexB.x, vertexB.y, color);
 	}
-
+    
     this->UPDATE_VERTICES = false;
 }

@@ -7,13 +7,13 @@
 struct Pixel { Color::Color color; };
 
 const int MAX_WIDTH = 500;
-const int MAX_HEIGHT = 500;
+const int MAX_HEIGHT = 300;
 
 class Screen
 {
 protected:
-    int canvas_width;
-    int canvas_height;
+    int width;
+    int height;
 
 private:    
     Pixel Canvas[MAX_WIDTH * MAX_HEIGHT + 5];
@@ -25,20 +25,20 @@ public:
     void Display();
     void Clear(Color::Color color = Color::White);
     void PutPixel(int x, int y, Color::Color color);
-    int get_CanvasWidth();
-    int get_CanvasHeight();
+    int get_width();
+    int get_height();
 };
 
 Screen::Screen()
 {
-    this->canvas_width = 0;
-    this->canvas_height = 0;
+    this->width = 0;
+    this->height = 0;
 }
 
 Screen::Screen(int width, int height)
 {
-    this->canvas_width = (width > MAX_WIDTH) ? MAX_WIDTH : width;
-    this->canvas_height = (height > MAX_HEIGHT) ? MAX_HEIGHT : height;
+    this->width = (width > MAX_WIDTH) ? MAX_WIDTH : width;
+    this->height = (height > MAX_HEIGHT) ? MAX_HEIGHT : height;
 }
 
 void Screen::Display()
@@ -46,10 +46,10 @@ void Screen::Display()
     RESET_CURSOR_POSITION
     
     std::string buffer;
-    for(int i = 0; i < this->canvas_width * this->canvas_height; i++)
+    for(int i = 0; i < this->width * this->height; i++)
     {
         buffer += Canvas[i].color + ' ' + "\033[0m";
-        if(!((i + 1) % this->canvas_width)) buffer += '\n';
+        if(!((i + 1) % this->width)) buffer += '\n';
     }
 
     std::cout << buffer;
@@ -57,27 +57,27 @@ void Screen::Display()
 
 void Screen::Clear(Color::Color color)
 {
-    for(int i = 0; i < this->canvas_width * this->canvas_height; i++)
+    for(int i = 0; i < this->width * this->height; i++)
         Canvas[i] = Pixel{color};
 }
 
 void Screen::PutPixel(int x, int y, Color::Color color)
 {
-    if (x >= 0 && x < this->canvas_width && y >= 0 && y < this->canvas_height)
-        Canvas[y * this->canvas_width + x] = Pixel{color};
+    if (x >= 0 && x < this->width && y >= 0 && y < this->height)
+        Canvas[y * this->width + x] = Pixel{color};
 }
 
-int Screen::get_CanvasWidth()
+int Screen::get_width()
 {
-    return this->canvas_width;
+    return this->width;
 }
 
-int Screen::get_CanvasHeight()
+int Screen::get_height()
 {
-    return this->canvas_height;
+    return this->height;
 }
 
-void DrawLine(Screen &screen, float x1, float y1, float x2, float y2, Color::Color color)
+void DrawLine(Screen &screen, int x1, int y1, int x2, int y2, Color::Color color)
 {
     int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
     dx = x2 - x1; dy = y2 - y1;
