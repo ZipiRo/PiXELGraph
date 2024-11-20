@@ -27,6 +27,8 @@ public:
     void PutPixel(int x, int y, Color::Color color);
     int get_width();
     int get_height();
+
+    // add mode to set the default background color withjout fill
 };
 
 Screen::Screen()

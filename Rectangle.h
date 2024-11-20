@@ -9,24 +9,12 @@ std::vector<Vector2> CreateRectangleVertices(float width, float height)
         float bottom = -height / 2.0f;
         float top = bottom + height;
 
-        vertices.push_back(Vector2(left, top));
-        vertices.push_back(Vector2(right, top));
-        vertices.push_back(Vector2(right, bottom));
-        vertices.push_back(Vector2(left, bottom));
+        vertices.emplace_back(Vector2(left, top));
+        vertices.emplace_back(Vector2(right, top));
+        vertices.emplace_back(Vector2(right, bottom));
+        vertices.emplace_back(Vector2(left, bottom));
 
     return vertices;
-}
-
-std::vector<Vector2> UpdateVertices(Transform transfrom, const std::vector<Vector2> &vertices)
-{
-    std::vector<Vector2> T_vertices;
-
-    transfrom.SinCosUpdate();
-
-    for(const Vector2 &vertex : vertices)
-        T_vertices.emplace_back(transfrom.TransformVertex(vertex));
-
-    return T_vertices;
 }
 
 class Rectangle : public Object
@@ -41,6 +29,7 @@ public:
     Rectangle(float x, float y, float width, float height, Color::Color color);
 
     void Draw(Screen &screen) override;
+    std::vector<Vector2> get_T_vertices() override;
 };
 
 Rectangle::Rectangle(float x, float y, float width, float height, Color::Color color)
@@ -52,12 +41,14 @@ Rectangle::Rectangle(float x, float y, float width, float height, Color::Color c
 
     this->vertices = CreateRectangleVertices(this->height, this->width);
     this->T_vertices = vertices;
+
+    this->UPDATE_VERTICES = true;
 }
 
 void Rectangle::Draw(Screen &screen)
 {
     if(UPDATE_VERTICES)
-        this->T_vertices = UpdateVertices(this->transform, this->vertices);
+        T_vertices = UpdateVertices(transform, vertices);
 
     for(auto vertex = T_vertices.begin(); vertex != T_vertices.end(); ++vertex)
 	{
@@ -71,5 +62,15 @@ void Rectangle::Draw(Screen &screen)
 		DrawLine(screen, vertexA.x, vertexA.y, vertexB.x, vertexB.y, color);
 	}
     
-    this->UPDATE_VERTICES = false;
+    UPDATE_VERTICES = false;
+}
+
+std::vector<Vector2> Rectangle::get_T_vertices()
+{
+    if(UPDATE_VERTICES)
+        T_vertices = UpdateVertices(transform, vertices);
+        
+    UPDATE_VERTICES = false;
+
+    return T_vertices;
 }

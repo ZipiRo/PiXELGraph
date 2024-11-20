@@ -18,8 +18,18 @@ const int HEIGHT = 200;
 
 Screen screen(WIDTH, HEIGHT);
 
+
+Color::Color colors[20] = {Color::Red, Color::Cyan, Color::Yellow, Color::Blue, Color::Purple, Color::Cyan,
+	Color::IntenseRed, Color::IntenseGreen, Color::IntenseYellow, Color::IntenseBlue, Color::IntenseCyan};
+
 int main()
 {
+    Elipse circle(WIDTH / 2, HEIGHT / 2, .5f, .5f, Color::Blue);
+
+    circle.Rotate(PI / 2);
+    circle.Scale({2, 0});
+    int i = 0;
+
 	int curentKey;
     bool running = true;
     while (running)
@@ -32,7 +42,13 @@ int main()
 
 		curentKey = 0;
 
-        screen.Clear();
+        // screen.Clear();
+
+        circle.set_Color(colors[i++ % 4]);
+        circle.Rotate(PI / 6);
+        circle.Scale({0.5f, 1 / 5.f});
+
+        circle.Draw(screen);
 
         screen.Display();
 
