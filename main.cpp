@@ -8,15 +8,17 @@
 #include <random>
 #include "PixelGraph.h"
 
-const float PI = 3.141592f;
-const int WIDTH = 300;
-const int HEIGHT = 200;
+const int WIDTH = 450;
+const int HEIGHT = 300;
 
-// 300x200 (CMD RATIO FONTSIZE=2 LINES=32 COLLS=100 )
+// 450x300 (CMD RATIO FONTSIZE=2 LINES=32 COLLS=100 )
 // 432x240, 320x240, 160x120, 100x100, 120x90
 // CMD Line height = 0.6
 
 Screen screen(WIDTH, HEIGHT);
+
+Color::Color colors[20] = {Color::Black, Color::Red, Color::Green, Color::Yellow, Color::Blue, Color::Purple, Color::Cyan, Color::White,
+	                    Color::IntenseBlack, Color::IntenseRed, Color::IntenseGreen, Color::IntenseYellow, Color::IntenseBlue, Color::IntensePurple, Color::IntenseCyan, Color::IntenseWhite};
 
 int main()
 {

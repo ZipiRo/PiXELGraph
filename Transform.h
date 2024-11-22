@@ -14,7 +14,7 @@ public:
     Transform(float x, float y, float scale_x, float scale_y, float angle);
 
     Vector2 TransformVertex(Vector2 vertex);
-    void SinCosUpdate();
+    Vector2 SinCosUpdate();
 };
 
 Transform::Transform()
@@ -31,10 +31,12 @@ Transform::Transform(float x, float y, float scale_x, float scale_y, float angle
     this->angle = angle;
 }
 
-void Transform::SinCosUpdate()
+Vector2 Transform::SinCosUpdate()
 {
     this->sin0 = sin(this->angle);
     this->cos0 = cos(this->angle);
+
+    return {cos0, sin0};
 }
 
 Vector2 Transform::TransformVertex(Vector2 vertex)
@@ -48,5 +50,5 @@ Vector2 Transform::TransformVertex(Vector2 vertex)
     float tx = rx + this->position.x;
     float ty = ry + this->position.y;
 
-    return Vector2(tx, ty);
+    return {tx, ty};
 }

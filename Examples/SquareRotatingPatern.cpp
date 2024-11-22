@@ -23,7 +23,7 @@ const int HEIGHT = 240;
 Screen screen(WIDTH, HEIGHT);
 
 Color::Color colors[20] = {Color::Black, Color::Red, Color::Green, Color::Yellow, Color::Blue, Color::Purple, Color::Cyan,
-	Color::IntenseBlack, Color::IntenseRed, Color::IntenseGreen, Color::IntenseYellow, Color::IntenseBlue, Color::IntensePurple, Color::IntenseCyan};
+	Color::PaleBlack, Color::PaleRed, Color::PaleGreen, Color::PaleYellow, Color::PaleBlue, Color::PalePurple, Color::PaleCyan};
 
 int main()
 {

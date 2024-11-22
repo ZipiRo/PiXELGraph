@@ -6,9 +6,8 @@
 #include <thread>
 #include <chrono>
 #include <random>
-#include "PixelGraph.h"
+#include "../PixelGraph.h"
 
-const float PI = 3.141592f;
 const int WIDTH = 300;
 const int HEIGHT = 200;
 

@@ -40,7 +40,6 @@ Rectangle::Rectangle(float x, float y, float width, float height, Color::Color c
     this->color = color;
 
     this->vertices = CreateRectangleVertices(this->height, this->width);
-    this->T_vertices = vertices;
 
     this->UPDATE_VERTICES = true;
 }

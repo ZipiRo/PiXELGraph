@@ -6,15 +6,8 @@
 #include <thread>
 #include <chrono>
 #include <random>
-#include "Color.h"
-#include "Screen.h"
-#include "Vector2.h"
-#include "Transform.h"
-#include "Object.h"
-#include "Rectangle.h"
-#include "Circle.h"
+#include "PixelGraph.h"
 
-const float PI = 3.141592f;
 const int WIDTH = 300;
 const int HEIGHT = 200;
 
@@ -48,19 +41,23 @@ int main()
         screen.Clear();
 
         angle += .1f;
-        float x = (cos(angle) * radius / 2) + m_Center.x;
+        float x = (cos(angle) * -radius / 2) + m_Center.x;
         float y = (sin(angle) * radius) + m_Center.y;
 
         square1.MoveTo(Vector2(x, y));
         square1.Rotate(0.1f);
         square1.Draw(screen);
+        
+        DrawLine(screen, m_Center.x, m_Center.y, x, y, Color::Green);
 
-        x = (cos(angle) * -radius / 2) + m_Center.x;
-        y = (sin(angle) * -radius) + m_Center.y;
+        x = (cos(angle) * -radius) + m_Center.x;
+        y = (sin(angle) * -radius / 2) + m_Center.y;
 
         square2.MoveTo(Vector2(x, y));
         square2.Rotate(0.1f);
         square2.Draw(screen);        
+
+        DrawLine(screen, m_Center.x, m_Center.y, x, y, Color::Red);
 
         screen.PutPixel(m_Center.x, m_Center.y, Color::Black);
         screen.Display();
