@@ -6,7 +6,7 @@
 #include <thread>
 #include <chrono>
 #include <random>
-#include "PixelGraph.h"
+#include "Include/PixelGraph.h"
 
 const int WIDTH = 450;
 const int HEIGHT = 300;
