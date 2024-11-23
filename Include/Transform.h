@@ -21,7 +21,7 @@ public:
 
 Transform::Transform()
 {
-    this->position = Zero;
+    this->position = ZERO;
     this->scale = Vector2(1.f, 1.f);
     this->angle = 0;
 }

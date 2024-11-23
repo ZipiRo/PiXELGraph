@@ -20,11 +20,11 @@ public:
     Vector2 &operator/= (float scalar);
 };
 
-const Vector2 Zero(0, 0);
-const Vector2 Up(0, 1);
-const Vector2 Down(0, -1);
-const Vector2 Right(1, 0);
-const Vector2 Left(-1, 0);
+const Vector2 ZERO(0, 0);
+const Vector2 UP(0, -1);
+const Vector2 DOWN(0, 1);
+const Vector2 RIGHT(1, 0);
+const Vector2 LEFT(-1, 0);
 
 Vector2::Vector2() {
     this->x = 0;

@@ -18,9 +18,6 @@ const int HEIGHT = 300;
 
 Screen screen(WIDTH, HEIGHT);
 
-Color::Color colors[20] = {Color::Red, Color::Green, Color::Yellow, Color::Blue, Color::Purple, Color::Cyan,  
-	                    Color::IntenseRed, Color::IntenseGreen, Color::IntenseYellow, Color::IntenseBlue, Color::IntensePurple, Color::IntenseCyan, Color::White, Color::IntenseWhite, Color::IntenseBlack, Color::Black, };
-
 int main()
 {
     int curentKey;
@@ -30,13 +27,11 @@ int main()
         if (_kbhit())
 			curentKey = _getch();
 
-		if (curentKey == 32) CLEAR_CONSOLE
-		if (curentKey == 27) running = false;
-
-		curentKey = 0;  
+		if (curentKey == Key::DELETE) CLEAR_CONSOLE
+		if (curentKey == Key::ESCAPE) running = false;
 
         screen.Clear();
-
+        
         screen.Display();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));

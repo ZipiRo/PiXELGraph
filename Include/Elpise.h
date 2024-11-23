@@ -56,11 +56,12 @@ Elipse::Elipse(float x, float y, float radiusX, float radiusY, const int point_c
 
 void Elipse::Draw(Screen &screen)
 {
-    
     if(UPDATE)
     {
         transformedVertices = UpdateVertices(transform, vertices);
-        boundingBox = (point_count > 15) ? UpdateElipseBoundingBox(transform, radiusX, radiusY) : UpdateBoundingBox(transformedVertices);
+        if(point_count > 15) boundingBox = UpdateElipseBoundingBox(transform, radiusX, radiusY);
+            else boundingBox = UpdateBoundingBox(transformedVertices);
+
         UPDATE = false;
     }
 
@@ -76,7 +77,9 @@ AABB Elipse::GetBoundingBox()
     if(UPDATE)
     {
         transformedVertices = UpdateVertices(transform, vertices);
-        boundingBox = (point_count > 15) ? UpdateElipseBoundingBox(transform, radiusX, radiusY) : UpdateBoundingBox(transformedVertices);
+        if(point_count > 15) boundingBox = UpdateElipseBoundingBox(transform, radiusX, radiusY);
+            else boundingBox = UpdateBoundingBox(transformedVertices);
+
         UPDATE = false;
     }
 

@@ -58,13 +58,13 @@ void Screen::Display()
 void Screen::Clear(Color::Color color)
 {
     for(int i = 0; i < this->width * this->height; i++)
-        Canvas[i] = Pixel{color};
+        Canvas[i] = {color};
 }
 
 void Screen::PutPixel(int x, int y, Color::Color color)
 {
     if (x >= 0 && x < this->width && y >= 0 && y < this->height)
-        Canvas[y * this->width + x] = Pixel{color};
+        Canvas[y * this->width + x] = {color};
 }
 
 int Screen::get_width()
