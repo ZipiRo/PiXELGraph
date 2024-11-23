@@ -16,59 +16,69 @@ std::vector<Vector2> CreateElipseVertices(float radiusX, float radiusY, const in
     return vertices;
 }
 
-class Elipse : public Object  
+AABB UpdateElipseBoundingBox(const Transform &transform, float radiusX, float radiusY)
+{   
+    int left = transform.position.x - (radiusX * transform.scale.x);
+    int top = transform.position.y - (radiusY * transform.scale.y);
+    int right = transform.position.x + (radiusX * transform.scale.x);
+    int bottom = transform.position.y + (radiusY * transform.scale.y);
+
+    return AABB(left, top, right, bottom);
+}
+
+class Elipse : public Shape  
 {
 private:
     float radiusX, radiusY;
-    std::vector<Vector2> vertices;
-    std::vector<Vector2> T_vertices;
+    int point_count;
 
 public:
     Elipse () {}
-    Elipse (float x, float y, float radiusX, float radiusY, Color::Color color, const int point_count = 30);
+    Elipse (float x, float y, float radiusX, float radiusY, const int point_count = 30);
 
     void Draw(Screen &screen) override;
-    std::vector<Vector2> get_T_vertices() override;
+    AABB GetBoundingBox() override;
 };
 
-Elipse::Elipse(float x, float y, float radiusX, float radiusY, Color::Color color, const int point_count)
+Elipse::Elipse(float x, float y, float radiusX, float radiusY, const int point_count)
 {
     this->transform.position = Vector2(x, y);
     this->radiusX = radiusX;
     this->radiusY = radiusY;
-    this->color = color;
+    this->point_count = point_count;
+    this->outlineColor = Color::Transparent;
+    this->fillColor = Color::Transparent;
 
     this->vertices = CreateElipseVertices(this->radiusX, this->radiusY, point_count);
     
-    this->UPDATE_VERTICES = true;
+    this->UPDATE = true;
 }
 
 void Elipse::Draw(Screen &screen)
 {
-    if(UPDATE_VERTICES)
-        T_vertices = UpdateVertices(transform, vertices);
+    
+    if(UPDATE)
+    {
+        transformedVertices = UpdateVertices(transform, vertices);
+        boundingBox = (point_count > 15) ? UpdateElipseBoundingBox(transform, radiusX, radiusY) : UpdateBoundingBox(transformedVertices);
+        UPDATE = false;
+    }
 
-    for(auto vertex = T_vertices.begin(); vertex != T_vertices.end(); ++vertex)
-	{
-		auto next_vertex = std::next(vertex);
-		if(next_vertex == T_vertices.end())
-			next_vertex = T_vertices.begin(); 
-		
-		Vector2 vertexA = *vertex;
-		Vector2 vertexB = *next_vertex;
+    if(fillColor != Color::Transparent)
+        FillShape(screen, boundingBox, transformedVertices, fillColor);
 
-		DrawLine(screen, vertexA.x, vertexA.y, vertexB.x, vertexB.y, color);
-	}
-
-    UPDATE_VERTICES = false;
+    if(outlineColor != Color::Transparent) 
+        DrawLines(screen, transformedVertices, outlineColor);
 }
 
-std::vector<Vector2> Elipse::get_T_vertices()
+AABB Elipse::GetBoundingBox()
 {
-    if(UPDATE_VERTICES)
-        T_vertices = UpdateVertices(transform, vertices);
-        
-    UPDATE_VERTICES = false;
+    if(UPDATE)
+    {
+        transformedVertices = UpdateVertices(transform, vertices);
+        boundingBox = (point_count > 15) ? UpdateElipseBoundingBox(transform, radiusX, radiusY) : UpdateBoundingBox(transformedVertices);
+        UPDATE = false;
+    }
 
-    return T_vertices;
+    return boundingBox;
 }

@@ -27,8 +27,6 @@ public:
     void PutPixel(int x, int y, Color::Color color);
     int get_width();
     int get_height();
-
-    // add mode to set the default background color withjout fill
 };
 
 Screen::Screen()
@@ -50,7 +48,7 @@ void Screen::Display()
     std::string buffer;
     for(int i = 0; i < this->width * this->height; i++)
     {
-        buffer += Canvas[i].color + ' ' + "\033[0m";
+        buffer += Canvas[i].color + ' ' + RESET_PIXEL;
         if(!((i + 1) % this->width)) buffer += '\n';
     }
 
@@ -128,5 +126,20 @@ void DrawLine(Screen &screen, int x1, int y1, int x2, int y2, Color::Color color
             }
             screen.PutPixel(x, y, color);
         }
+    }
+}
+
+void DrawLines(Screen &screen, const std::vector<Vector2> &vertices, Color::Color color)
+{
+    for(auto vertex = vertices.begin(); vertex != vertices.end(); ++vertex)
+    {
+        auto next_vertex = std::next(vertex);
+        if(next_vertex == vertices.end())
+            next_vertex = vertices.begin(); 
+        
+        Vector2 vertexA = *vertex;
+        Vector2 vertexB = *next_vertex;
+
+        DrawLine(screen, vertexA.x, vertexA.y, vertexB.x, vertexB.y, color);
     }
 }

@@ -2,6 +2,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <list>
 #include <conio.h>
 #include <thread>
 #include <chrono>
@@ -17,12 +18,12 @@ const int HEIGHT = 300;
 
 Screen screen(WIDTH, HEIGHT);
 
-Color::Color colors[20] = {Color::Black, Color::Red, Color::Green, Color::Yellow, Color::Blue, Color::Purple, Color::Cyan, Color::White,
-	                    Color::IntenseBlack, Color::IntenseRed, Color::IntenseGreen, Color::IntenseYellow, Color::IntenseBlue, Color::IntensePurple, Color::IntenseCyan, Color::IntenseWhite};
+Color::Color colors[20] = {Color::Red, Color::Green, Color::Yellow, Color::Blue, Color::Purple, Color::Cyan,  
+	                    Color::IntenseRed, Color::IntenseGreen, Color::IntenseYellow, Color::IntenseBlue, Color::IntensePurple, Color::IntenseCyan, Color::White, Color::IntenseWhite, Color::IntenseBlack, Color::Black, };
 
 int main()
 {
-	int curentKey;
+    int curentKey;
     bool running = true;
     while (running)
     {
@@ -32,7 +33,7 @@ int main()
 		if (curentKey == 32) CLEAR_CONSOLE
 		if (curentKey == 27) running = false;
 
-		curentKey = 0;
+		curentKey = 0;  
 
         screen.Clear();
 
@@ -40,6 +41,6 @@ int main()
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    
+
     return 0;
 }

@@ -15,6 +15,8 @@ public:
 
     Vector2 TransformVertex(Vector2 vertex);
     Vector2 SinCosUpdate();
+
+    // add way to set pivot point
 };
 
 Transform::Transform()
