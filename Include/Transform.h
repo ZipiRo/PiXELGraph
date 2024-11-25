@@ -10,13 +10,14 @@ public:
     Vector2 scale;
     float angle;
 
+    Vector2 right;
+    Vector2 up;
+
     Transform();
     Transform(float x, float y, float scale_x, float scale_y, float angle);
 
     Vector2 TransformVertex(Vector2 vertex);
     Vector2 SinCosUpdate();
-
-    // add way to set pivot point
 };
 
 Transform::Transform()
@@ -24,6 +25,8 @@ Transform::Transform()
     this->position = ZERO;
     this->scale = Vector2(1.f, 1.f);
     this->angle = 0;
+    this->right = RIGHT;
+    this->up  = UP;
 }
 
 Transform::Transform(float x, float y, float scale_x, float scale_y, float angle)
@@ -31,14 +34,19 @@ Transform::Transform(float x, float y, float scale_x, float scale_y, float angle
     this->position = Vector2(x, y);
     this->scale = Vector2(scale_x, scale_y);
     this->angle = angle;
+    this->right = RIGHT;
+    this->up  = UP;
 }
 
 Vector2 Transform::SinCosUpdate()
 {
-    this->sin0 = sin(this->angle);
     this->cos0 = cos(this->angle);
+    this->sin0 = sin(this->angle);
 
-    return {cos0, sin0};
+    this->right = Vector2(cos0, sin0);
+    this->up = Vector2(sin0, -cos0);
+
+    return Vector2(cos0, sin0);
 }
 
 Vector2 Transform::TransformVertex(Vector2 vertex)

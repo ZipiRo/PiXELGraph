@@ -1,18 +1,18 @@
 #pragma once
 
-std::vector<Vector2> CreateRectangleVertices(float width, float height)
+std::vector<Vector2> CreateRectangleVertices(float width, float height, float originX, float originY)
 {
     std::vector<Vector2> vertices;
 
-        float left = -width / 2.0f;
-        float right = left + width;
-        float bottom = -height / 2.0f;
-        float top = bottom + height;
+    float left = -width * originX;
+    float right = left + width;
+    float bottom = -height * originY;
+    float top = bottom + height;
 
-        vertices.emplace_back(Vector2(left, top));
-        vertices.emplace_back(Vector2(right, top));
-        vertices.emplace_back(Vector2(right, bottom));
-        vertices.emplace_back(Vector2(left, bottom));
+    vertices.emplace_back(Vector2(left, top));
+    vertices.emplace_back(Vector2(right, top));
+    vertices.emplace_back(Vector2(right, bottom));
+    vertices.emplace_back(Vector2(left, bottom));
 
     return vertices;
 }
@@ -25,6 +25,8 @@ private:
 public:
     Rectangle() {}
     Rectangle(float x, float y, float width, float height);
+
+    void SetOrigin(Vector2 origin) override;
 };
 
 Rectangle::Rectangle(float x, float y, float width, float height)
@@ -35,7 +37,12 @@ Rectangle::Rectangle(float x, float y, float width, float height)
     this->outlineColor = Color::Transparent;
     this->fillColor = Color::Transparent;
 
-    this->vertices = CreateRectangleVertices(this->height, this->width);
+    this->vertices = CreateRectangleVertices(this->height, this->width, 0, 0);
 
     this->UPDATE = true;
+}
+
+void Rectangle::SetOrigin(Vector2 origin)
+{
+    vertices = CreateRectangleVertices(width, height, origin.x, origin.y);
 }

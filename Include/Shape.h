@@ -1,6 +1,6 @@
 #pragma once
 
-std::vector<Vector2> UpdateVertices(Transform transfrom, const std::vector<Vector2> &vertices)
+std::vector<Vector2> UpdateVertices(Transform &transfrom, const std::vector<Vector2> &vertices)
 {
     std::vector<Vector2> transformedVertices;
 
@@ -107,6 +107,9 @@ public:
     virtual void Draw(Screen &screen);
     virtual std::vector<Vector2> GetVertices();
     virtual AABB GetBoundingBox();
+    virtual void SetOrigin(Vector2 origin) {};
+
+    Transform GetTransform();
 
     void Rotate(float amount);
     void RotateTo(float angle);
@@ -153,6 +156,18 @@ AABB Shape::GetBoundingBox()
     }
 
     return boundingBox;
+}
+
+Transform Shape::GetTransform()
+{
+    if(UPDATE)
+    {
+        transformedVertices = UpdateVertices(transform, vertices);
+        boundingBox = UpdateBoundingBox(transformedVertices);
+        UPDATE = false;
+    }
+
+    return transform;
 }
 
 void Shape::ScaleTo(Vector2 scale)

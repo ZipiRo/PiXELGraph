@@ -7,6 +7,9 @@ public:
     Vector2(float x, float y);
 
     Vector2 &operator= (const Vector2 b);
+    bool operator!() const;
+    bool operator== (const Vector2 &b);
+    bool operator!=(const Vector2 &b);
     Vector2 operator-() const;
     Vector2 operator+ (const Vector2 b) const;
     Vector2 operator- (const Vector2 b) const;
@@ -42,6 +45,21 @@ Vector2& Vector2::operator= (const Vector2 b) {
         this->y = b.y;
     }
     return *this;
+}
+
+bool Vector2::operator==(const Vector2 &b)
+{
+    return (this->x == b.x && this->y == b.y);
+}
+
+bool Vector2::operator!=(const Vector2 &b)
+{
+    return (this->x != b.x && this->y != b.y);
+}
+
+bool Vector2::operator!() const
+{
+    return (!this->x && !this->y);
 }
 
 Vector2 Vector2::operator-() const {
