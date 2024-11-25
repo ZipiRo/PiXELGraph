@@ -17,5 +17,5 @@ Polygon::Polygon(const std::vector<Vector2> &vertices, float x, float y)
 
     this->vertices = vertices;
 
-    this->UPDATE = true;
+    this->transform.update = true;
 }

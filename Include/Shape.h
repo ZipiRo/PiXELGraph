@@ -98,8 +98,6 @@ protected:
 
     Color::Color outlineColor;
     Color::Color fillColor;
-
-    bool UPDATE;
          
 public:
     Shape() {}
@@ -107,27 +105,21 @@ public:
     virtual void Draw(Screen &screen);
     virtual std::vector<Vector2> GetVertices();
     virtual AABB GetBoundingBox();
-    virtual void SetOrigin(Vector2 origin) {};
+    virtual void SetPivot(Vector2 pivot) {};
 
-    Transform GetTransform();
+    Transform &Transform();
 
-    void Rotate(float amount);
-    void RotateTo(float angle);
-    void Move(Vector2 amount);
-    void MoveTo(Vector2 position);
-    void Scale(Vector2 amount);
-    void ScaleTo(Vector2 scale);
     void SetOutlineColor(Color::Color color);
     void SetFillColor(Color::Color color);
 };
 
 void Shape::Draw(Screen &screen)
 {
-    if(UPDATE)
+    if(transform.update)
     {
         transformedVertices = UpdateVertices(transform, vertices);
         boundingBox = UpdateBoundingBox(transformedVertices);
-        UPDATE = false;
+        transform.update = false;
     }
 
     if(fillColor != Color::Transparent)
@@ -139,71 +131,35 @@ void Shape::Draw(Screen &screen)
 
 std::vector<Vector2> Shape::GetVertices()
 {
-    if(UPDATE)
+    if(transform.update)
         transformedVertices = UpdateVertices(transform, vertices);
-    UPDATE = false;
+    transform.update = false;
 
-    return transformedVertices;
+    return this->transformedVertices;
 }
 
 AABB Shape::GetBoundingBox()
 {
-    if(UPDATE)
+    if(transform.update)
     {
         transformedVertices = UpdateVertices(transform, vertices);
         boundingBox = UpdateBoundingBox(transformedVertices);
-        UPDATE = false;
+        transform.update = false;
     }
 
-    return boundingBox;
+    return this->boundingBox;
 }
 
-Transform Shape::GetTransform()
+Transform &Shape::Transform()
 {
-    if(UPDATE)
+    if(transform.update)
     {
         transformedVertices = UpdateVertices(transform, vertices);
         boundingBox = UpdateBoundingBox(transformedVertices);
-        UPDATE = false;
+        transform.update = false;
     }
 
-    return transform;
-}
-
-void Shape::ScaleTo(Vector2 scale)
-{
-    this->transform.scale = scale;
-    UPDATE = true;
-}
-
-void Shape::Scale(Vector2 amount)
-{
-    this->transform.scale += amount;
-    UPDATE = true;
-}
-
-void Shape::Rotate(float amount)
-{
-    this->transform.angle += amount;
-    UPDATE = true;
-}
-
-void Shape::RotateTo(float angle)
-{
-    this->transform.angle = angle;
-    UPDATE = true;
-}
-
-void Shape::Move(Vector2 amount)
-{
-    this->transform.position += amount;
-    UPDATE = true;
-}
-
-void Shape::MoveTo(Vector2 position)
-{
-    this->transform.position = position;
-    UPDATE = true;
+    return this->transform;
 }
 
 void Shape::SetOutlineColor(Color::Color color)

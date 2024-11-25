@@ -1,14 +1,22 @@
 #pragma once
 
-std::vector<Vector2> CreateElipseVertices(float radiusX, float radiusY, const int point_count)
+std::vector<Vector2> CreateElipseVertices(float radiusX, float radiusY, const int point_count, float pivotX, float pivotY)
 {
     std::vector<Vector2> vertices;
 
+    pivotX = radiusX * pivotX;
+    pivotY = radiusY * pivotY;
+
     float res = (2 * PI) / point_count;
-    for(float angle = 0.f; angle <= 2 * PI; angle += res)
+    for(float angle = 0.f; angle < 2 * PI; angle += res)
     {
-        float x = cos(angle) * radiusX;
-        float y = sin(angle) * radiusY;
+        // PUT THE VERTICES RELATIVE TO THE 0, 0 PIVOT POINT
+        float x = cos(angle) * radiusX - pivotX + radiusX; 
+        float y = sin(angle) * radiusY - pivotY + radiusY;
+
+        // PUT THE VERTICES AT THE SPECIFIED PIVOT POINT
+        x -= pivotX;
+        y -= pivotY;
 
         vertices.emplace_back(Vector2(x, y));
     }
@@ -38,6 +46,7 @@ public:
 
     void Draw(Screen &screen) override;
     AABB GetBoundingBox() override;
+    void SetPivot(Vector2 pivot) override;
 };
 
 Elipse::Elipse(float x, float y, float radiusX, float radiusY, const int point_count)
@@ -49,20 +58,20 @@ Elipse::Elipse(float x, float y, float radiusX, float radiusY, const int point_c
     this->outlineColor = Color::Transparent;
     this->fillColor = Color::Transparent;
 
-    this->vertices = CreateElipseVertices(this->radiusX, this->radiusY, point_count);
+    this->vertices = CreateElipseVertices(this->radiusX, this->radiusY, point_count, 0, 0);
     
-    this->UPDATE = true;
+    this->transform.update = true;
 }
 
 void Elipse::Draw(Screen &screen)
 {
-    if(UPDATE)
+    if(transform.update)
     {
         transformedVertices = UpdateVertices(transform, vertices);
         if(point_count > 15) boundingBox = UpdateElipseBoundingBox(transform, radiusX, radiusY);
             else boundingBox = UpdateBoundingBox(transformedVertices);
 
-        UPDATE = false;
+        transform.update = false;
     }
 
     if(fillColor != Color::Transparent)
@@ -74,14 +83,19 @@ void Elipse::Draw(Screen &screen)
 
 AABB Elipse::GetBoundingBox()
 {
-    if(UPDATE)
+    if(transform.update)
     {
         transformedVertices = UpdateVertices(transform, vertices);
         if(point_count > 15) boundingBox = UpdateElipseBoundingBox(transform, radiusX, radiusY);
             else boundingBox = UpdateBoundingBox(transformedVertices);
 
-        UPDATE = false;
+        transform.update = false;
     }
 
     return boundingBox;
+}
+
+void Elipse::SetPivot(Vector2 pivot)
+{
+    vertices = CreateElipseVertices(this->radiusX, this->radiusY, point_count, pivot.x, pivot.y);
 }

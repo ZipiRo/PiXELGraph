@@ -1,11 +1,23 @@
 #pragma once
 
+float NormalizeAngle(float angle) {
+    angle = angle - floor(angle / (2.0f * PI)) * (2.0f * PI);
+    
+    if (angle < 0)
+        angle += 2.0f * PI;
+    
+    return angle;
+}
+
+
 class Transform
 {
-private:
+protected:
     float sin0 = 0.f, cos0 = 1.f;
 
 public:
+    bool update;
+    
     Vector2 position;
     Vector2 scale;
     float angle;
@@ -18,6 +30,13 @@ public:
 
     Vector2 TransformVertex(Vector2 vertex);
     Vector2 SinCosUpdate();
+    
+    void Rotate(float amount);
+    void RotateTo(float angle);
+    void Move(Vector2 amount);
+    void MoveTo(Vector2 position);
+    void Scale(Vector2 amount);
+    void ScaleTo(Vector2 scale);
 };
 
 Transform::Transform()
@@ -60,5 +79,42 @@ Vector2 Transform::TransformVertex(Vector2 vertex)
     float tx = rx + this->position.x;
     float ty = ry + this->position.y;
 
-    return {tx, ty};
+    return Vector2(tx, ty);
+}
+
+void Transform::ScaleTo(Vector2 scale)
+{
+    this->scale = scale;
+    this->update = true;
+}
+
+void Transform::Scale(Vector2 amount)
+{
+    this->scale += amount;
+    this->update = true;
+}
+
+void Transform::Rotate(float amount)
+{
+    this->angle += amount;
+    angle = NormalizeAngle(angle);
+    this->update = true;
+}
+
+void Transform::RotateTo(float angle)
+{
+    angle = NormalizeAngle(angle);
+    this->update = true;
+}
+
+void Transform::Move(Vector2 amount)
+{
+    this->position += amount;
+    this->update = true;
+}
+
+void Transform::MoveTo(Vector2 position)
+{
+    this->position = position;
+    this->update = true;
 }

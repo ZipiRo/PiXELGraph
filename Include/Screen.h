@@ -16,7 +16,7 @@ protected:
     int height;
 
 private:    
-    Pixel Canvas[MAX_WIDTH * MAX_HEIGHT + 5];
+    Pixel screen[MAX_WIDTH * MAX_HEIGHT + 5];
 
 public:
     Screen();
@@ -25,8 +25,8 @@ public:
     void Display();
     void Clear(Color::Color color = Color::White);
     void PutPixel(int x, int y, Color::Color color);
-    int get_width();
-    int get_height();
+    int getWidth();
+    int getHeight();
 };
 
 Screen::Screen()
@@ -43,36 +43,36 @@ Screen::Screen(int width, int height)
 
 void Screen::Display()
 {
-    RESET_CURSOR_POSITION
+    RESET_CURSOR_POSITION // PUT CURSOR AT (0, 0)
     
-    std::string buffer;
-    for(int i = 0; i < this->width * this->height; i++)
+    std::string buffer; // MAKE A BUFFER
+    for(int i = 0; i < this->width * this->height; i++) // ITTERATE THE SCREEN
     {
-        buffer += Canvas[i].color + ' ' + RESET_PIXEL;
-        if(!((i + 1) % this->width)) buffer += '\n';
+        buffer += screen[i].color + ' ' + RESET_PIXEL; // ADD TO BUFFER COLORED PIXEL, A SPACE AND RESET THE PIXEL
+        if(!((i + 1) % this->width)) buffer += '\n'; // ADD TO BUFFER NEW LINE IF WE GOT TO THE WIDTH LIMIT
     }
 
-    std::cout << buffer;
+    std::cout << buffer; // THROW EVERYTHING AT ONCE AT THE CONSOLE
 }
 
 void Screen::Clear(Color::Color color)
 {
     for(int i = 0; i < this->width * this->height; i++)
-        Canvas[i] = {color};
+        screen[i] = {color};
 }
 
 void Screen::PutPixel(int x, int y, Color::Color color)
 {
     if (x >= 0 && x < this->width && y >= 0 && y < this->height)
-        Canvas[y * this->width + x] = {color};
+        screen[y * this->width + x] = {color};
 }
 
-int Screen::get_width()
+int Screen::getWidth()
 {
     return this->width;
 }
 
-int Screen::get_height()
+int Screen::getHeight()
 {
     return this->height;
 }

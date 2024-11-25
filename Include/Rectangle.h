@@ -1,12 +1,12 @@
 #pragma once
 
-std::vector<Vector2> CreateRectangleVertices(float width, float height, float originX, float originY)
+std::vector<Vector2> CreateRectangleVertices(float width, float height, float pivotX, float pivotY)
 {
     std::vector<Vector2> vertices;
 
-    float left = -width * originX;
+    float left = -width * pivotX;
     float right = left + width;
-    float bottom = -height * originY;
+    float bottom = -height * pivotY;
     float top = bottom + height;
 
     vertices.emplace_back(Vector2(left, top));
@@ -26,7 +26,7 @@ public:
     Rectangle() {}
     Rectangle(float x, float y, float width, float height);
 
-    void SetOrigin(Vector2 origin) override;
+    void SetPivot(Vector2 pivot) override;
 };
 
 Rectangle::Rectangle(float x, float y, float width, float height)
@@ -39,10 +39,10 @@ Rectangle::Rectangle(float x, float y, float width, float height)
 
     this->vertices = CreateRectangleVertices(this->height, this->width, 0, 0);
 
-    this->UPDATE = true;
+    this->transform.update = true;
 }
 
-void Rectangle::SetOrigin(Vector2 origin)
+void Rectangle::SetPivot(Vector2 pivot)
 {
-    vertices = CreateRectangleVertices(width, height, origin.x, origin.y);
+    vertices = CreateRectangleVertices(width, height, pivot.x, pivot.y);
 }
