@@ -97,7 +97,7 @@ void Transform::Scale(Vector2 amount)
 void Transform::Rotate(float amount)
 {
     this->angle += amount;
-    angle = NormalizeAngle(angle);
+    this->angle = NormalizeAngle(this->angle);
     this->update = true;
 }
 

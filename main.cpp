@@ -27,11 +27,10 @@ int main()
         if (_kbhit())
 			curentKey = _getch();
 
-		if (curentKey == Key::DELETE) CLEAR_CONSOLE
+		if (curentKey == Key::SPACE) CLEAR_CONSOLE
 		if (curentKey == Key::ESCAPE) running = false;
 
         curentKey = 0;
-
         screen.Clear();
 
         screen.Display();
