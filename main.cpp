@@ -1,7 +1,10 @@
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include <string>
+#include <cstring>
 #include <vector>
+#include <map>
 #include <list>
 #include <conio.h>
 #include <thread>
@@ -18,8 +21,20 @@ const int HEIGHT = 300;
 
 Screen screen(WIDTH, HEIGHT);
 
+Color::Color colors[20] = {Color::Black, Color::Red, Color::Green, Color::Yellow, Color::Blue, Color::Purple, Color::Cyan,
+	Color::IntenseBlack, Color::IntenseRed, Color::IntenseGreen, Color::IntenseYellow, Color::IntenseBlue, Color::IntensePurple, Color::IntenseCyan};
+
+
+int i = 0;
 int main()
 {
+    Text text(40, HEIGHT / 2);
+    text.setFont("pixel.font");
+    text.setString("FUCK");
+    text.setColor(Color::Blue);
+    text.setFontSize(10);
+    text.setFontWeight(2);
+
     int curentKey;
     bool running = true;
     while (running)
@@ -30,12 +45,15 @@ int main()
 		if (curentKey == Key::SPACE) CLEAR_CONSOLE
 		if (curentKey == Key::ESCAPE) running = false;
 
-        curentKey = 0;
-        screen.Clear();
+        text.setColor(colors[i++ % 14]);
 
+        curentKey = 0;
+
+        screen.Clear();
+        text.Draw(screen);
         screen.Display();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 60));
     }
 
     return 0;
