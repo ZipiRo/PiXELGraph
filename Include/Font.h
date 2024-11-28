@@ -2,85 +2,56 @@ struct Glyph
 {
     std::vector<Vector2> vertices;
     std::vector<unsigned int> indices;
+    float advance; // Spaceing after glyph;
 };
+
+using json = nlohmann::json;
 
 void CreateFontTable(const std::string &file, std::map<char, Glyph>& glyphs)
 {
-    std::ifstream FILE(file);
-    if(!FILE) 
-    {
-        std::cerr << "Failed to create font table from file: " << file << std::endl;
+    if (file.substr(file.find_last_of(".") + 1) != "f2p") {
+        std::cerr << "Invalid file extension. Expected '.f2p'.\n";
         return;
     }
-    
-    glyphs.clear();
-    
-    char buffer[60];
-    while (FILE)
+
+    std::ifstream FILE(file);
+    if(!FILE)
+    {   
+        std::cerr << "Failed to open font file: " << file << std::endl;
+        return;
+    }
+
+    json fontData;
+    FILE >> fontData; 
+
+    if(!fontData.contains("glyphs"))
     {
-        FILE.getline(buffer, sizeof(buffer));
+        std::cerr << "Invalid font file format: Missing 'glyphs' key" << file << std::endl;
+        return;
+    }
 
-        if (strchr(buffer, '}'))
-            continue;
+    for(const auto &entry : fontData["glyphs"].items())
+    {
+        char character = entry.key()[0];
+        const auto &glyphData = entry.value();
 
-        char c = buffer[0];
         Glyph glyph;
 
-        if (!strchr(buffer, '{'))
-            continue;
-
-        int a = 0, b = 0;
-        int vertexCounter = 0;
-        int stateCounter = 0;
-
-        FILE.getline(buffer, sizeof(buffer));
-
-        int i = 0;
-        bool valid = false;
-        while (!valid)
+        for(const auto &vertex : glyphData["vertices"])
         {
-            if (stateCounter == 0)
-            {
-                if (buffer[i] == ';')
-                {
-                    stateCounter++;
-                    FILE.getline(buffer, sizeof(buffer));
-                    i = -1;
-                }
-
-                if (buffer[i] >= '0' && buffer[i] <= '9')
-                {
-                    if (vertexCounter == 0)
-                        a = buffer[i] - '0';
-                    else if (vertexCounter == 1)
-                        b = buffer[i] - '0';
-
-                    vertexCounter++;
-                }
-
-                if (vertexCounter > 1)
-                {
-                    glyph.vertices.emplace_back(Vector2(a, b));
-                    vertexCounter = 0;
-                }
-            }
-            else if (stateCounter == 1)
-            {
-                if (buffer[i] == ';')
-                {
-                    stateCounter++;
-                    valid = true;
-                }
-
-                if (buffer[i] >= '0' && buffer[i] <= '9')
-                {
-                    glyph.indices.emplace_back(buffer[i] - '0');
-                }
-            }
-            i++;
+            float x = vertex[0];
+            float y = vertex[1];
+            glyph.vertices.emplace_back(Vector2(x, y));
         }
 
-        glyphs.insert({c, glyph});
+        for(const auto  &index : glyphData["indices"])
+        {
+            glyph.indices.emplace_back(index);
+        }
+
+        glyph.advance = glyphData["advance"];
+
+        glyphs[character] = glyph;
     }
 }
  

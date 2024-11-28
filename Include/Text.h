@@ -6,7 +6,7 @@ void CreateTextVertices(const std::string &string, std::vector<Vector2> &vertice
     // add \n for new line text
 
     int offset = 0;
-    int letterSpacing = 5;
+    float advance = 0;
     for(int i = 0; string[i]; i++)
     {
         if(string[i] == ' ') continue;
@@ -14,7 +14,7 @@ void CreateTextVertices(const std::string &string, std::vector<Vector2> &vertice
         Glyph glyph = font.Get(string[i]);
         for(Vector2 &vertex : glyph.vertices)
         {
-            vertices.emplace_back(vertex + Vector2(letterSpacing * i, 0));
+            vertices.emplace_back(vertex + Vector2((0.1 + advance) * i, 0));
         }
 
         for(unsigned int &index : glyph.indices)
@@ -23,6 +23,7 @@ void CreateTextVertices(const std::string &string, std::vector<Vector2> &vertice
         }
 
         offset += glyph.vertices.size();
+        advance = glyph.advance;
     }
 }
 
@@ -48,10 +49,12 @@ public:
     Text(float x, float y);
 
     void Draw(Screen &screen);
+    AABB GetBoundingBox();
 
     Transform &Transform();
 
     void setFont(const std::string &file);
+    void setFont(const Font &font);
     void setString(const std::string &string);
     void setColor(Color::Color color);
     void setFontWeight(int weight);
@@ -95,6 +98,18 @@ void Text::Draw(Screen &screen)
     }
 }   
 
+AABB Text::GetBoundingBox()
+{
+    if(transform.update)
+    {
+        transformedVertices = UpdateVertices(transform, vertices);
+        boundingBox = UpdateBoundingBox(transformedVertices);
+        transform.update = false;
+    }
+
+    return this->boundingBox;
+}
+
 Transform &Text::Transform()
 {
     if(transform.update)
@@ -110,6 +125,11 @@ Transform &Text::Transform()
 void Text::setFont(const std::string &file)
 {
     this->font.SetFont(file);
+}
+
+void Text::setFont(const Font &font)
+{
+    this->font = font;
 }
 
 void Text::setString(const std::string &string)

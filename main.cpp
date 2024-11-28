@@ -28,13 +28,33 @@ Color::Color colors[20] = {Color::Black, Color::Red, Color::Green, Color::Yellow
 int i = 0;
 int main()
 {
-    Text text(40, HEIGHT / 2);
-    text.setFont("pixel.font");
+    Font font("pizxel.f2p");
+
+    Text text(150, 60);
+    text.setFont(font);
     text.setString("FUCK");
-    text.setColor(Color::Blue);
-    text.setFontSize(10);
+    text.setColor(Color::Red);
+    text.setFontSize(25);
     text.setFontWeight(2);
 
+    Text text2(150, 105);
+    text2.setFont(font);
+    text2.setString("XXX");
+    text2.setColor(Color::Black);
+    text2.setFontSize(25);
+    text2.setFontWeight(2);
+    
+    Text text3(150, 145);
+    text3.setFont(font);
+    text3.setString("LOOL");
+    text3.setColor(Color::Blue);
+    text3.setFontSize(25);
+    text3.setFontWeight(2);
+
+    AABB textBoundingBox;
+    
+    int i = 0;
+    bool rotate = false;
     int curentKey;
     bool running = true;
     while (running)
@@ -44,13 +64,23 @@ int main()
 
 		if (curentKey == Key::SPACE) CLEAR_CONSOLE
 		if (curentKey == Key::ESCAPE) running = false;
-
-        text.setColor(colors[i++ % 14]);
+        if (curentKey == Key::ENTER) rotate = true;
+        // text.setColor(colors[i++ % 14]);
 
         curentKey = 0;
+        if(rotate)
+        {
+            text.Transform().Rotate(5 * DEG_TO_RAD);
+            text2.Transform().Rotate(5 * DEG_TO_RAD);
+            text3.Transform().Rotate(5 * DEG_TO_RAD);
+        }
+        // textBoundingBox = text.GetBoundingBox();
 
         screen.Clear();
         text.Draw(screen);
+        text2.Draw(screen);
+        text3.Draw(screen);
+        // DrawLines(screen, textBoundingBox.box, Color::Black);
         screen.Display();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 60));
