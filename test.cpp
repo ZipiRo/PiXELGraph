@@ -30,26 +30,27 @@ int main()
 {
     Font font("pizxel.f2p");
 
-    Text text(150, 60);
+    Text text(10, 60);
     text.setFont(font);
-    text.setString("FUCK");
+    text.setString("ABCDEFGHIJKLMOPQRSTUVWXYZ");
     text.setColor(Color::Red);
-    text.setFontSize(25);
-    text.setFontWeight(2);
+    text.setFontSize(10);
+    text.setFontWeight(1);
 
-    Text text2(150, 105);
+    Text text2(10, 105);
     text2.setFont(font);
-    text2.setString("XXX");
+    text2.setString("abcdefghijklmnopqrstuvwxyz");
     text2.setColor(Color::Black);
-    text2.setFontSize(25);
-    text2.setFontWeight(2);
+    text2.setFontSize(10);
+    text2.setFontWeight(1);
+
     
-    Text text3(150, 145);
+    Text text3(10, 140);
     text3.setFont(font);
-    text3.setString("LOOL");
-    text3.setColor(Color::Blue);
-    text3.setFontSize(25);
-    text3.setFontWeight(2);
+    text3.setString("1234567890");
+    text3.setColor(Color::Black);
+    text3.setFontSize(10);
+    text3.setFontWeight(1);
 
     AABB textBoundingBox;
     
@@ -72,15 +73,12 @@ int main()
         {
             text.Transform().Rotate(5 * DEG_TO_RAD);
             text2.Transform().Rotate(5 * DEG_TO_RAD);
-            text3.Transform().Rotate(5 * DEG_TO_RAD);
         }
-        // textBoundingBox = text.GetBoundingBox();
 
         screen.Clear();
         text.Draw(screen);
         text2.Draw(screen);
         text3.Draw(screen);
-        // DrawLines(screen, textBoundingBox.box, Color::Black);
         screen.Display();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 60));
