@@ -24,37 +24,33 @@ Screen screen(WIDTH, HEIGHT);
 Color::Color colors[20] = {Color::Black, Color::Red, Color::Green, Color::Yellow, Color::Blue, Color::Purple, Color::Cyan,
 	Color::IntenseBlack, Color::IntenseRed, Color::IntenseGreen, Color::IntenseYellow, Color::IntenseBlue, Color::IntensePurple, Color::IntenseCyan};
 
-
-int i = 0;
 int main()
 {
     Font font("pizxel.f2p");
 
     Text text(10, 60);
     text.setFont(font);
-    text.setString("ABCDEFGHIJKLMOPQRSTUVWXYZ");
+    text.setString("BUNA ACESTA ESTE O FONTUL PE CARE L-AM CREAT EU\nESTE ANUL 30:11:2024");
     text.setColor(Color::Red);
-    text.setFontSize(10);
-    text.setFontWeight(1);
 
     Text text2(10, 105);
     text2.setFont(font);
     text2.setString("abcdefghijklmnopqrstuvwxyz");
     text2.setColor(Color::Black);
-    text2.setFontSize(10);
-    text2.setFontWeight(1);
 
     
     Text text3(10, 140);
     text3.setFont(font);
-    text3.setString("1234567890");
-    text3.setColor(Color::Black);
-    text3.setFontSize(10);
-    text3.setFontWeight(1);
+    text3.setString("0123456789-+:");
+    text3.setColor(Color::Blue);
 
     AABB textBoundingBox;
     
     int i = 0;
+
+    float fontSizeC = 5;
+    int fontWeight = 1;
+
     bool rotate = false;
     int curentKey;
     bool running = true;
@@ -65,14 +61,26 @@ int main()
 
 		if (curentKey == Key::SPACE) CLEAR_CONSOLE
 		if (curentKey == Key::ESCAPE) running = false;
-        if (curentKey == Key::ENTER) rotate = true;
-        // text.setColor(colors[i++ % 14]);
+        if (curentKey == Key::ENTER) rotate = !rotate;
+
+        if(curentKey == '-') fontSizeC--;
+        if(curentKey == '=') fontSizeC++;
+        if(curentKey == '_') fontWeight--;
+        if(curentKey == '+') fontWeight++;
+
+        text.setFontSize(fontSizeC);
+        text.setFontWeight(fontWeight);
+        text2.setFontSize(fontSizeC);
+        text2.setFontWeight(fontWeight);
+        text3.setFontSize(fontSizeC);
+        text3.setFontWeight(fontWeight);
 
         curentKey = 0;
         if(rotate)
         {
             text.Transform().Rotate(5 * DEG_TO_RAD);
             text2.Transform().Rotate(5 * DEG_TO_RAD);
+            text3.Transform().Rotate(5 * DEG_TO_RAD);
         }
 
         screen.Clear();

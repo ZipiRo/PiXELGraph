@@ -3,18 +3,35 @@ void CreateTextVertices(const std::string &string, std::vector<Vector2> &vertice
     vertices.clear();
     indices.clear();
 
-    // add \n for new line text
-
     int offset = 0;
     float advance = 0;
+    float devance = 0;
+    float letterCount = 0;
+    float lines = 0;
+
+
     for(int i = 0; string[i]; i++)
     {
-        if(string[i] == ' ') continue;
+        if(string[i] == ' ') 
+        {
+            letterCount++;
+            continue;
+        }
+        else if(string[i] == '\n')
+        {
+            advance = 0;
+            letterCount = 0;
+            lines += 1.5;
+            continue;
+        }
 
         Glyph glyph = font.Get(string[i]);
+
+        devance = glyph.devance;
+
         for(Vector2 &vertex : glyph.vertices)
         {
-            vertices.emplace_back(vertex + Vector2((0.1 + advance) * i, 0));
+            vertices.emplace_back(vertex + Vector2(((0.25 + advance) - devance) * letterCount, lines));
         }
 
         for(unsigned int &index : glyph.indices)
@@ -24,6 +41,7 @@ void CreateTextVertices(const std::string &string, std::vector<Vector2> &vertice
 
         offset += glyph.vertices.size();
         advance = glyph.advance;
+        letterCount++;
     }
 }
 

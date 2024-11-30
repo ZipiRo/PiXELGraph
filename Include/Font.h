@@ -2,7 +2,8 @@ struct Glyph
 {
     std::vector<Vector2> vertices;
     std::vector<unsigned int> indices;
-    float advance; // Spaceing after glyph;
+    float advance; // Spaceing after glyph
+    float devance; // Spaceing before glyph
 };
 
 using json = nlohmann::json;
