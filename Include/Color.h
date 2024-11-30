@@ -2,25 +2,34 @@
 
 namespace Color
 {
-    typedef std::string Color;
+    enum Color
+    {
+        Transparent,
+        Black, Red, Green, Yellow, Blue, Purple, Cyan, White,
+        IntenseBlack, IntenseRed, IntenseGreen, IntenseYellow,
+        IntenseBlue, IntensePurple, IntenseCyan, IntenseWhite
+    };
 
-    const Color Transparent("");
-
-    const Color Black("\033[40m");
-    const Color Red("\033[41m");
-    const Color Green("\033[42m");
-    const Color Yellow("\033[43m");
-    const Color Blue("\033[44m");
-    const Color Purple("\033[45m");
-    const Color Cyan("\033[46m");
-    const Color White("\033[107m");
-
-    const Color IntenseBlack("\033[100m");
-    const Color IntenseRed("\033[101m");
-    const Color IntenseGreen("\033[102m");
-    const Color IntenseYellow("\033[103m");
-    const Color IntenseBlue("\033[104m");
-    const Color IntensePurple("\033[105m");
-    const Color IntenseCyan("\033[106m");
-    const Color IntenseWhite("\033[47m");
+    std::string ToAnsi(Color color) {
+        switch (color) {
+            case Transparent: return "";
+            case Black: return "\033[40m";
+            case Red: return "\033[41m";
+            case Green: return "\033[42m";
+            case Yellow: return "\033[43m";
+            case Blue: return "\033[44m";
+            case Purple: return "\033[45m";
+            case Cyan: return "\033[46m";
+            case White: return "\033[107m";
+            case IntenseBlack: return "\033[100m";
+            case IntenseRed: return "\033[101m";
+            case IntenseGreen: return "\033[102m";
+            case IntenseYellow: return "\033[103m";
+            case IntenseBlue: return "\033[104m";
+            case IntensePurple: return "\033[105m";
+            case IntenseCyan: return "\033[106m";
+            case IntenseWhite: return "\033[47m";
+            default: return ""; // Handle invalid input
+        }
+    }
 }

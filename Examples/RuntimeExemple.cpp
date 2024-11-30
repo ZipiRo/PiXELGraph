@@ -1,7 +1,10 @@
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include <string>
+#include <cstring>
 #include <vector>
+#include <map>
 #include <list>
 #include <conio.h>
 #include <thread>
@@ -18,8 +21,10 @@ const int HEIGHT = 300;
 
 Screen screen(WIDTH, HEIGHT);
 
+int i = 0;
 int main()
 {
+    bool rotate = false;
     int curentKey;
     bool running = true;
     while (running)
@@ -31,11 +36,12 @@ int main()
 		if (curentKey == Key::ESCAPE) running = false;
 
         curentKey = 0;
+
         screen.Clear();
 
         screen.Display();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 60));
     }
 
     return 0;

@@ -23,12 +23,16 @@ const float RAD_TO_DEG = 180.0f / PI;
 const int MAX_INT = 2147483647;
 const int MIN_INT = -2147483647 ;
 
+#include "nlohmann/json.hpp"
+
 #include "Vector2.h"
 #include "Color.h"
 #include "Screen.h"
 #include "Transform.h"
 #include "AABB.h"
+#include "Font.h"
 #include "Shape.h"
+#include "Text.h"
 #include "Polygon.h"
 #include "Rectangle.h"
 #include "Elpise.h"
