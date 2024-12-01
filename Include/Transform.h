@@ -9,7 +9,6 @@ float NormalizeAngle(float angle) {
     return angle;
 }
 
-
 class Transform
 {
 protected:

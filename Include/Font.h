@@ -1,7 +1,7 @@
 struct Glyph
 {
     std::vector<Vector2> vertices;
-    std::vector<unsigned int> indices;
+    std::vector<int> indices;
     float advance; // Spaceing after glyph
     float devance; // Spaceing before glyph
 };
@@ -65,8 +65,8 @@ public:
     Font() {};
     Font(const std::string &file);
 
-    void SetFont(const std::string &file);
     Glyph Get(char character);
+    bool Exists(char character);
 };
 
 Font::Font(const std::string &file)
@@ -74,9 +74,12 @@ Font::Font(const std::string &file)
     CreateFontTable(file, glyphs);
 }
 
-void Font::SetFont(const std::string &file)
+bool Font::Exists(char character)
 {
-    CreateFontTable(file, glyphs);
+    auto it = glyphs.find(character);
+    if(it != glyphs.end()) return true;
+
+    return false;
 }
 
 Glyph Font::Get(char character)

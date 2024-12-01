@@ -55,7 +55,7 @@ Elipse::Elipse(float x, float y, float radiusX, float radiusY, const int point_c
     this->radiusX = radiusX;
     this->radiusY = radiusY;
     this->point_count = point_count;
-    this->outlineColor = Color::Transparent;
+    this->outlineColor = Color::Black;
     this->fillColor = Color::Transparent;
 
     this->vertices = CreateElipseVertices(this->radiusX, this->radiusY, point_count, 0, 0);
@@ -76,9 +76,12 @@ void Elipse::Draw(Screen &screen)
 
     if(fillColor != Color::Transparent)
         FillShape(screen, boundingBox, transformedVertices, fillColor);
-
+    
     if(outlineColor != Color::Transparent) 
-        DrawLines(screen, transformedVertices, outlineColor);
+    {
+        if(outlineThickness > 1) DrawThickLines(screen, transformedVertices, outlineThickness, outlineColor);
+            else DrawLines(screen, transformedVertices, outlineColor);
+    }
 }
 
 AABB Elipse::GetBoundingBox()

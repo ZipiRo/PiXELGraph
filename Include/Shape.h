@@ -98,6 +98,7 @@ protected:
 
     Color::Color outlineColor;
     Color::Color fillColor;
+    int outlineThickness;
          
 public:
     Shape() {}
@@ -111,6 +112,7 @@ public:
 
     void SetOutlineColor(Color::Color color);
     void SetFillColor(Color::Color color);
+    void SetOutlineThickness(int thickness);
 };
 
 void Shape::Draw(Screen &screen)
@@ -126,7 +128,10 @@ void Shape::Draw(Screen &screen)
         FillShape(screen, boundingBox, transformedVertices, fillColor);
 
     if(outlineColor != Color::Transparent) 
-        DrawLines(screen, transformedVertices, outlineColor);
+    {
+        if(outlineThickness > 1) DrawThickLines(screen, transformedVertices, outlineThickness, outlineColor);
+            else DrawLines(screen, transformedVertices, outlineColor);
+    }
 }
 
 std::vector<Vector2> Shape::GetVertices()
@@ -170,4 +175,9 @@ void Shape::SetOutlineColor(Color::Color color)
 void Shape::SetFillColor(Color::Color color)
 {
     this->fillColor = color;
+}
+
+void Shape::SetOutlineThickness(int thickness)
+{
+    this->outlineThickness = thickness;
 }

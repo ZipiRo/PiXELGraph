@@ -34,7 +34,7 @@ Rectangle::Rectangle(float x, float y, float width, float height)
     this->transform.position = Vector2(x, y);
     this->width = width;
     this->height = height;
-    this->outlineColor = Color::Transparent;
+    this->outlineColor = Color::Black;
     this->fillColor = Color::Transparent;
 
     this->vertices = CreateRectangleVertices(this->height, this->width, 0, 0);

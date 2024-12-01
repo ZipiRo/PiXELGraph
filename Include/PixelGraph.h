@@ -25,6 +25,7 @@ const int MIN_INT = -2147483647 ;
 
 #include "nlohmann/json.hpp"
 
+#include "Timer.h"
 #include "Vector2.h"
 #include "Color.h"
 #include "Screen.h"

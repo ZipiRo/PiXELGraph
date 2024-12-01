@@ -26,16 +26,16 @@ Color::Color colors[20] = {Color::Black, Color::Red, Color::Green, Color::Yellow
 
 int main()
 {
-    Font font("pizxel.f2p");
+    Font font("Resources/pizxel.f2p");
 
     Text text(10, 10);
     text.setFont(font);
-    text.setString("THE QUIK BROWN FOX\nJUMPS OVER THE LAZY DOG");
+    text.setString("THE QUICK BROWN FOX\nJUMPS OVER THE LAZY DOG");
     text.setColor(Color::White);
 
     Text text2(10, text.GetBoundingBox().bottom + 10);
     text2.setFont(font);
-    text2.setString("the quik brown fox\njumps over the lazy dog");
+    text2.setString("the quick brown fox\njumps over the lazy dog");
     text2.setColor(Color::White);
 
     Text text3(10, text2.GetBoundingBox().bottom + 10);

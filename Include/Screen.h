@@ -156,3 +156,18 @@ void DrawLines(Screen &screen, const std::vector<Vector2> &vertices, Color::Colo
         DrawLine(screen, vertexA.x, vertexA.y, vertexB.x, vertexB.y, color);
     }
 }
+
+void DrawThickLines(Screen &screen, const std::vector<Vector2> &vertices, int thickness, Color::Color color)
+{
+    for(auto vertex = vertices.begin(); vertex != vertices.end(); ++vertex)
+    {
+        auto next_vertex = std::next(vertex);
+        if(next_vertex == vertices.end())
+            next_vertex = vertices.begin(); 
+        
+        Vector2 vertexA = *vertex;
+        Vector2 vertexB = *next_vertex;
+
+        DrawThickLine(screen, vertexA.x, vertexA.y, vertexB.x, vertexB.y, thickness, color);
+    }
+}
