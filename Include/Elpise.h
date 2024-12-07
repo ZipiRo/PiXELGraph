@@ -24,16 +24,6 @@ std::vector<Vector2> CreateElipseVertices(float radiusX, float radiusY, const in
     return vertices;
 }
 
-AABB UpdateElipseBoundingBox(const Transform &transform, float radiusX, float radiusY)
-{   
-    int left = transform.position.x - (radiusX * transform.scale.x);
-    int top = transform.position.y - (radiusY * transform.scale.y);
-    int right = transform.position.x + (radiusX * transform.scale.x);
-    int bottom = transform.position.y + (radiusY * transform.scale.y);
-
-    return AABB(left, top, right, bottom);
-}
-
 class Elipse : public Shape  
 {
 private:
@@ -45,8 +35,8 @@ public:
     Elipse (float x, float y, float radiusX, float radiusY, const int point_count = 30);
 
     void Draw(Screen &screen) override;
-    AABB GetBoundingBox() override;
     void SetPivot(Vector2 pivot) override;
+    Box GetBoundingBox() override;
 };
 
 Elipse::Elipse(float x, float y, float radiusX, float radiusY, const int point_count)
@@ -54,13 +44,27 @@ Elipse::Elipse(float x, float y, float radiusX, float radiusY, const int point_c
     this->transform.position = Vector2(x, y);
     this->radiusX = radiusX;
     this->radiusY = radiusY;
+    this->outlineThickness = 1;
     this->point_count = point_count;
     this->outlineColor = Color::Black;
     this->fillColor = Color::Transparent;
 
     this->vertices = CreateElipseVertices(this->radiusX, this->radiusY, point_count, 0, 0);
-    
+
     this->transform.update = true;
+}
+
+Box Elipse::GetBoundingBox()
+{
+    if(transform.update)
+    {
+        transformedVertices = UpdateVertices(transform, vertices);
+        boundingBox = (point_count > 15) ? UpdateElipseBoundingBox(transform.position, transform.scale.x * radiusX, transform.scale.y * radiusY) : 
+                                            UpdatePolygonBoundingBox(transformedVertices);
+        transform.update = false;
+    }
+
+    return this->boundingBox;
 }
 
 void Elipse::Draw(Screen &screen)
@@ -68,37 +72,21 @@ void Elipse::Draw(Screen &screen)
     if(transform.update)
     {
         transformedVertices = UpdateVertices(transform, vertices);
-        if(point_count > 15) boundingBox = UpdateElipseBoundingBox(transform, radiusX, radiusY);
-            else boundingBox = UpdateBoundingBox(transformedVertices);
-
+        boundingBox = (point_count > 15) ? UpdateElipseBoundingBox(transform.position, transform.scale.x * radiusX, transform.scale.y * radiusY) : 
+                                            UpdatePolygonBoundingBox(transformedVertices);
         transform.update = false;
     }
 
-    if(fillColor != Color::Transparent)
+    if(fillColor != Transparent)
         FillShape(screen, boundingBox, transformedVertices, fillColor);
-    
-    if(outlineColor != Color::Transparent) 
-    {
-        if(outlineThickness > 1) DrawThickLines(screen, transformedVertices, outlineThickness, outlineColor);
-            else DrawLines(screen, transformedVertices, outlineColor);
-    }
+
+    if(outlineColor != Transparent) 
+        DrawLines(screen, transformedVertices, outlineColor, outlineThickness);
 }
 
-AABB Elipse::GetBoundingBox()
-{
-    if(transform.update)
-    {
-        transformedVertices = UpdateVertices(transform, vertices);
-        if(point_count > 15) boundingBox = UpdateElipseBoundingBox(transform, radiusX, radiusY);
-            else boundingBox = UpdateBoundingBox(transformedVertices);
-
-        transform.update = false;
-    }
-
-    return boundingBox;
-}
 
 void Elipse::SetPivot(Vector2 pivot)
 {
     vertices = CreateElipseVertices(this->radiusX, this->radiusY, point_count, pivot.x, pivot.y);
+    transform.update = true;
 }

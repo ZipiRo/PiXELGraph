@@ -54,24 +54,24 @@ private:
     std::string currentString;
 
     Transform transform;
-    AABB boundingBox;
+    Box boundingBox;
 
     int fontWeight;
 
-    Color::Color fontColor;
+    Color fontColor;
 
 public:
     Text() {}
     Text(float x, float y);
 
     void Draw(Screen &screen);
-    AABB GetBoundingBox();
+    Box GetBoundingBox();
 
     Transform &Transform();
 
     void setFont(const Font &font);
     void setString(const std::string &string);
-    void setColor(Color::Color color);
+    void setColor(Color color);
     void setFontWeight(int weight);
     void setFontSize(float size);
     std::string getCurrentString();
@@ -83,7 +83,7 @@ Text::Text(float x, float y)
     this->transform.scale = Vector2(5, 5);
     this->fontWeight = 1;
     
-    this->fontColor = Color::Black;
+    this->fontColor = Black;
 }
 
 void Text::setString(const std::string &string)
@@ -98,13 +98,13 @@ void Text::Draw(Screen &screen)
     if(transform.update)
     {
         transformedVertices = UpdateVertices(transform, vertices);
-        boundingBox = UpdateBoundingBox(transformedVertices);
+        boundingBox = UpdatePolygonBoundingBox(transformedVertices);
         transform.update = false;
     }
 
     if(transformedVertices.empty()) return;
 
-    if(fontColor == Color::Transparent) return;
+    if(fontColor == Transparent) return;
 
     for(int i = 0; i < indices.size() - 1; i += 2)
     {   
@@ -118,12 +118,12 @@ void Text::Draw(Screen &screen)
     }
 }   
 
-AABB Text::GetBoundingBox()
+Box Text::GetBoundingBox()
 {
     if(transform.update)
     {
         transformedVertices = UpdateVertices(transform, vertices);
-        boundingBox = UpdateBoundingBox(transformedVertices);
+        boundingBox = UpdatePolygonBoundingBox(transformedVertices);
         transform.update = false;
     }
 
@@ -144,7 +144,7 @@ void Text::setFont(const Font &font)
     this->font = font;
 }
 
-void Text::setColor(Color::Color color)
+void Text::setColor(Color color)
 {
     this->fontColor = color;
 }

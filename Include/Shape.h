@@ -12,7 +12,7 @@ std::vector<Vector2> UpdateVertices(Transform &transfrom, const std::vector<Vect
     return transformedVertices;
 }
 
-AABB UpdateBoundingBox(const std::vector<Vector2> &vertices)
+Box UpdatePolygonBoundingBox(const std::vector<Vector2> &vertices)
 {
     int left = MAX_INT;
     int top = MAX_INT;
@@ -28,13 +28,26 @@ AABB UpdateBoundingBox(const std::vector<Vector2> &vertices)
         if(vertex.y > bottom) bottom = vertex.y;
     }
 
-    return AABB(left, top, right, bottom);
+    return Box(left, top, right, bottom);
 }
 
-void FillShape(Screen &screen, const AABB &bondingBox, const std::vector<Vector2> &vertices, Color::Color color)
+Box UpdateElipseBoundingBox(const Vector2 &position, float radiusX, float radiusY)
+{   
+    float radius = radiusX;
+    if(radius < radiusY)  radius = radiusY;
+
+    int left = position.x - radius;
+    int top = position.y - radius;
+    int right = position.x + radius;
+    int bottom = position.y + radius;
+
+    return Box(left, top, right, bottom);
+}
+
+void FillShape(Screen &screen, const Box &boundingBox, const std::vector<Vector2> &vertices, Color color)
 {
-    int minY = bondingBox.top;
-    int maxY = bondingBox.bottom;
+    int minY = boundingBox.top;
+    int maxY = boundingBox.bottom;
 
     if(minY > maxY)
     {
@@ -82,7 +95,7 @@ void FillShape(Screen &screen, const AABB &bondingBox, const std::vector<Vector2
             int xEnd = floor(intersections[i + 1]);
 
             for(int x = xStart; x <= xEnd; x++)
-                screen.PutPixel(x, y, color);
+                screen.PlotPixel(x, y, color);
         }
     }
 }
@@ -94,24 +107,23 @@ protected:
     std::vector<Vector2> transformedVertices;
 
     Transform transform;
-    AABB boundingBox;
+    Box boundingBox;
 
-    Color::Color outlineColor;
-    Color::Color fillColor;
+    Color outlineColor;
+    Color fillColor;
     int outlineThickness;
-         
+
 public:
     Shape() {}
 
     virtual void Draw(Screen &screen);
-    virtual std::vector<Vector2> GetVertices();
-    virtual AABB GetBoundingBox();
-    virtual void SetPivot(Vector2 pivot) {};
+    virtual Box GetBoundingBox();
+    virtual std::vector<Vector2> GetTransformVertices();
+    virtual Transform &GetTransform();
+    virtual void SetPivot(Vector2 pivot) = 0;
 
-    Transform &Transform();
-
-    void SetOutlineColor(Color::Color color);
-    void SetFillColor(Color::Color color);
+    void SetOutlineColor(Color color);
+    void SetFillColor(Color color);
     void SetOutlineThickness(int thickness);
 };
 
@@ -120,64 +132,62 @@ void Shape::Draw(Screen &screen)
     if(transform.update)
     {
         transformedVertices = UpdateVertices(transform, vertices);
-        boundingBox = UpdateBoundingBox(transformedVertices);
+        boundingBox = UpdatePolygonBoundingBox(transformedVertices);
         transform.update = false;
     }
 
-    if(fillColor != Color::Transparent)
+    if(fillColor != Transparent)
         FillShape(screen, boundingBox, transformedVertices, fillColor);
 
-    if(outlineColor != Color::Transparent) 
-    {
-        if(outlineThickness > 1) DrawThickLines(screen, transformedVertices, outlineThickness, outlineColor);
-            else DrawLines(screen, transformedVertices, outlineColor);
-    }
+    if(outlineColor != Transparent) 
+        DrawLines(screen, transformedVertices, outlineColor, outlineThickness);
 }
 
-std::vector<Vector2> Shape::GetVertices()
-{
-    if(transform.update)
-        transformedVertices = UpdateVertices(transform, vertices);
-    transform.update = false;
-
-    return this->transformedVertices;
-}
-
-AABB Shape::GetBoundingBox()
+Box Shape::GetBoundingBox()
 {
     if(transform.update)
     {
         transformedVertices = UpdateVertices(transform, vertices);
-        boundingBox = UpdateBoundingBox(transformedVertices);
+        boundingBox = UpdatePolygonBoundingBox(transformedVertices);
         transform.update = false;
     }
 
     return this->boundingBox;
 }
 
-Transform &Shape::Transform()
+std::vector<Vector2> Shape::GetTransformVertices()
 {
     if(transform.update)
     {
         transformedVertices = UpdateVertices(transform, vertices);
-        boundingBox = UpdateBoundingBox(transformedVertices);
         transform.update = false;
     }
 
+    return this->transformedVertices;
+}
+
+Transform &Shape::GetTransform()
+{
+    if(transform.update)
+    {
+        transformedVertices = UpdateVertices(transform, vertices);
+        transform.update = false;
+    }
+    
     return this->transform;
 }
 
-void Shape::SetOutlineColor(Color::Color color)
+void Shape::SetOutlineColor(Color color)
 {
     this->outlineColor = color;
 }
 
-void Shape::SetFillColor(Color::Color color)
+void Shape::SetFillColor(Color color)
 {
     this->fillColor = color;
 }
 
 void Shape::SetOutlineThickness(int thickness)
 {
-    this->outlineThickness = thickness;
+    this->outlineThickness = thickness < 1 ? 1 : thickness;
 }
