@@ -1,3 +1,6 @@
+#pragma once
+
+#include "nlohmann/json.hpp"
 struct Glyph
 {
     std::vector<Vector2> vertices;
