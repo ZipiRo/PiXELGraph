@@ -9,7 +9,7 @@ public:
         this->timeScale = 1;
         this->screenColor = Color255::White;
 
-        Init(450, 300);
+        Init(300, 200);
     }
 
 private:
