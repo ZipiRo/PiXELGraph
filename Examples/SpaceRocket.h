@@ -25,7 +25,7 @@ private:
         fps_text.setFont(font);
         fps_text.setFontSize(4.5);
 
-        elipse = Elipse(30, 40, 100, 60, 3);
+        elipse = Elipse(30, 40, 10, 6, 3);
         elipse.SetPivot({0.5, 0.5});
     }
 
@@ -75,7 +75,6 @@ private:
             boostTimer += deltaTime;
 
             elipse.SetFillColor(colorCounter++ % 255);
-
             if(boostTimer >= 1)
             {
                 speed = 40;

@@ -6,7 +6,7 @@
 #define RESET_PIXEL = "\e[0m";
 
 const int MAX_WIDTH = 500;
-const int MAX_HEIGHT = 300;
+const int MAX_HEIGHT = 500;
 
 class Screen
 {
