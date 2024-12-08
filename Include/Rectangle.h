@@ -35,8 +35,8 @@ Rectangle::Rectangle(float x, float y, float width, float height)
     this->width = width;
     this->height = height;
     this->outlineThickness = 1;
-    this->outlineColor = Color255::Black;
-    this->fillColor = Color255::Transparent;
+    this->outlineColor = Color256::Black;
+    this->fillColor = Color256::Transparent;
 
     this->vertices = CreateRectangleVertices(this->height, this->width, 0, 0);
 

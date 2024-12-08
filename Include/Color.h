@@ -2,7 +2,7 @@
 
 typedef unsigned short int Color;
 
-enum Color255
+enum Color256
 {
     Transparent = 0,
     Black = 16,

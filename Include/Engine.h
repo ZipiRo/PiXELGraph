@@ -16,7 +16,7 @@ protected:
 
     float FPS = 60;
     float timeScale = 1.0;
-    Color screenColor = Color255::White;
+    Color screenColor = Color256::White;
 
     bool running;
 

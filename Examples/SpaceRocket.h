@@ -7,7 +7,7 @@ public:
     {
         this->FPS = 60;
         this->timeScale = 1;
-        this->screenColor = Color255::White;
+        this->screenColor = Color256::White;
 
         Init(300, 200);
     }
@@ -82,7 +82,7 @@ private:
                 boost = false;
                 boostTimer = 0;
 
-                elipse.SetFillColor(Color255::Transparent);
+                elipse.SetFillColor(Color256::Transparent);
             }
         }
     }
@@ -92,7 +92,7 @@ private:
         elipse.Draw(screen);
         fps_text.Draw(screen);
 
-        // DrawLine(screen, 0, 0, mousePosition.x, mousePosition.y, Color255::Green);
+        DrawThickLine(screen, 0, 0, mousePosition.x, mousePosition.y, 2, Color256::Green);
     }
 
     void OnQuit() override

@@ -21,7 +21,7 @@ public:
     Screen(int width, int height);
 
     void Display();
-    void Clear(Color color = Color255::White);
+    void Clear(Color color = Color256::White);
     void PlotPixel(int x, int y, Color color);
     int GetWidth();
     int GetHeight();
