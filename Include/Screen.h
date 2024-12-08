@@ -41,19 +41,28 @@ Screen::Screen(int width, int height)
 }
 
 void Screen::Display()
-{   
-    std::string buffer; // MAKE A BUFFER
-    buffer.reserve(width * height * 20);
+{
+    std::ostringstream buffer;
+    buffer << RESET_CURSOR_POSITION;
 
-    buffer += RESET_CURSOR_POSITION;
-    for(int i = 0; i < width * height; i++) // ITTERATE THE SCREEN PIXELS
+    int prevColor = -1; // Store the previous pixel's color
+    for (int i = 0; i < width * height; i++)
     {
-        buffer += "\e[48;5;" + std::to_string(screen[i]) + "m \e[0m" ; // ADD TO BUFFER COLORED PIXEL, A SPACE AND RESET THE PIXEL
-        if((i + 1) % width == 0) 
-            buffer += '\n'; // ADD TO BUFFER NEW LINE IF WE GOT TO THE WIDTH LIMIT
+        if (screen[i] != prevColor)
+        {
+            buffer << "\e[48;5;" << screen[i] << "m"; // Set color only when it changes
+            prevColor = screen[i];
+        }
+        buffer << ' '; // Draw pixel (space)
+
+        if ((i + 1) % width == 0)
+        {
+            buffer << "\e[0m\n"; // Reset formatting at end of row
+            prevColor = -1; // Force color reset for the next row
+        }
     }
 
-    std::cout << buffer; // THROW EVERYTHING AT ONCE AT THE CONSOLE
+    std::cout << buffer.str();
 }
 
 void Screen::Clear(Color color)

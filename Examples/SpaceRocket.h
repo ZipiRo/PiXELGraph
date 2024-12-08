@@ -7,9 +7,9 @@ public:
     {
         this->FPS = 60;
         this->timeScale = 1;
-        this->screenColor = Color255::Black;
+        this->screenColor = Color255::White;
 
-        Init(300, 200);
+        Init(450, 300);
     }
 
 private:
@@ -23,11 +23,9 @@ private:
         font = Font("Resources/basic.f2p");
         fps_text = Text(1, 1);
         fps_text.setFont(font);
-        fps_text.setColor(Color255::White);
         fps_text.setFontSize(4.5);
 
         elipse = Elipse(30, 40, 100, 60, 3);
-        elipse.SetOutlineColor(Color255::White);
         elipse.SetPivot({0.5, 0.5});
     }
 
@@ -95,7 +93,7 @@ private:
         elipse.Draw(screen);
         fps_text.Draw(screen);
 
-        DrawLine(screen, 0, 0, mousePosition.x, mousePosition.y, Color255::Green);
+        // DrawLine(screen, 0, 0, mousePosition.x, mousePosition.y, Color255::Green);
     }
 
     void OnQuit() override
