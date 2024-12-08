@@ -16,6 +16,7 @@ protected:
 
     float FPS = 60;
     float timeScale = 1.0;
+    Color screenColor = Color255::White;
 
     bool running;
 
@@ -59,7 +60,7 @@ void Engine::Run()
             this->OnUpdate(timer.DeltaTime());
         }
 
-        screen.Clear();
+        screen.Clear(screenColor);
         this->OnDraw(screen);
         screen.Display();
     }

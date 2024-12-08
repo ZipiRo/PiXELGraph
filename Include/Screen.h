@@ -1,10 +1,9 @@
 #pragma once
 
-#define RESET_CURSOR_POSITION std::cout << "\033[H";
-#define CLEAR_CONSOLE std::cout << "\033[2J";\
+#define CLEAR_CONSOLE std::cout << "\e[2J";
 
-const std::string RESET_PIXEL = "\033[0m";
-const char NEW_LINE = '\n';
+#define RESET_CURSOR_POSITION "\e[H";
+#define RESET_PIXEL = "\e[0m";
 
 const int MAX_WIDTH = 500;
 const int MAX_HEIGHT = 300;
@@ -22,7 +21,7 @@ public:
     Screen(int width, int height);
 
     void Display();
-    void Clear(Color color = White);
+    void Clear(Color color = Color255::White);
     void PlotPixel(int x, int y, Color color);
     int GetWidth();
     int GetHeight();
@@ -42,17 +41,16 @@ Screen::Screen(int width, int height)
 }
 
 void Screen::Display()
-{
-    RESET_CURSOR_POSITION // RESET CURSOR POSITION
-    
+{   
     std::string buffer; // MAKE A BUFFER
     buffer.reserve(width * height * 20);
 
-    for(int i = 0; i < width * height; i++) // ITTERATE THE SCREEN
+    buffer += RESET_CURSOR_POSITION;
+    for(int i = 0; i < width * height; i++) // ITTERATE THE SCREEN PIXELS
     {
-        buffer += ToAnsi(screen[i]) + ' ' + RESET_PIXEL; // ADD TO BUFFER COLORED PIXEL, A SPACE AND RESET THE PIXEL
+        buffer += "\e[48;5;" + std::to_string(screen[i]) + "m \e[0m" ; // ADD TO BUFFER COLORED PIXEL, A SPACE AND RESET THE PIXEL
         if((i + 1) % width == 0) 
-            buffer += NEW_LINE; // ADD TO BUFFER NEW LINE IF WE GOT TO THE WIDTH LIMIT
+            buffer += '\n'; // ADD TO BUFFER NEW LINE IF WE GOT TO THE WIDTH LIMIT
     }
 
     std::cout << buffer; // THROW EVERYTHING AT ONCE AT THE CONSOLE

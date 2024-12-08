@@ -108,7 +108,7 @@ enum Keyboard
     Key_RightAlt = VK_RMENU
 };
 
-enum class Mouse 
+enum Mouse 
 {
     Left = 0,
     Right = 1,
@@ -141,9 +141,11 @@ public:
         mouseButtonStates[Mouse::Middle].isPressed = WindowsApi:: GetAsyncKeyState(VK_MBUTTON) & 0x8000;
 
         WindowsApi::POINT point;
-        if (WindowsApi::GetCursorPos(&point)) {
-            WindowsApi::HWND hwnd = WindowsApi::GetForegroundWindow(); // Get the handle of your application window
-            if (hwnd && WindowsApi::ScreenToClient(hwnd, &point)) {
+        if (WindowsApi::GetCursorPos(&point)) 
+        {
+            WindowsApi::HWND hwnd = WindowsApi::GetForegroundWindow();
+            if (hwnd && WindowsApi::ScreenToClient(hwnd, &point)) 
+            {
                 mousePositionX = point.x;
                 mousePositionY = point.y;
             }
@@ -189,43 +191,52 @@ public:
         return false;
     }
 
-    bool isMouseButtonDown(Mouse button) const {
+    bool isMouseButtonDown(Mouse button) const 
+    {
         auto it = mouseButtonStates.find(button);
         return it != mouseButtonStates.end() && it->second.isPressed;
     }
 
-    bool isMouseButtonUp(Mouse button) const {
+    bool isMouseButtonUp(Mouse button) const 
+    {
         auto it = mouseButtonStates.find(button);
-        if (it != mouseButtonStates.end()) {
+        if (it != mouseButtonStates.end()) 
+        {
             const auto& state = it->second;
             return !state.isPressed && state.wasPressed;
         }
         return false;
     }
 
-    bool isMouseButtonPressed(Mouse button) const {
+    bool isMouseButtonPressed(Mouse button) const 
+    {
         auto it = mouseButtonStates.find(button);
-        if (it != mouseButtonStates.end()) {
+        if (it != mouseButtonStates.end()) 
+        {
             const auto& state = it->second;
             return state.isPressed && !state.wasPressed;
         }
         return false;
     }
 
-    bool isMouseButtonHeld(Mouse button) const {
+    bool isMouseButtonHeld(Mouse button) const 
+    {
         auto it = mouseButtonStates.find(button);
-        if (it != mouseButtonStates.end()) {
+        if (it != mouseButtonStates.end()) 
+        {
             const auto& state = it->second;
             return state.isPressed && state.wasPressed;
         }
         return false;
     }
 
-    int getMousePositionX() const {
+    int GetMousePositionX() const 
+    {
         return mousePositionX;
     }
 
-    int getMousePositionY() const {
+    int GetMousePositionY() const 
+    {
         return mousePositionY;
     }
 

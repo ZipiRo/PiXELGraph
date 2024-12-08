@@ -46,8 +46,8 @@ Elipse::Elipse(float x, float y, float radiusX, float radiusY, const int point_c
     this->radiusY = radiusY;
     this->outlineThickness = 1;
     this->point_count = point_count;
-    this->outlineColor = Color::Black;
-    this->fillColor = Color::Transparent;
+    this->outlineColor = Color255::Black;
+    this->fillColor = Color255::Transparent;
 
     this->vertices = CreateElipseVertices(this->radiusX, this->radiusY, point_count, 0, 0);
 
