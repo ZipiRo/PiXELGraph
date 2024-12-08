@@ -9,7 +9,7 @@ public:
         this->timeScale = 1;
         this->screenColor = Color255::Black;
 
-        Init(100, 100);
+        Init(300, 200);
     }
 
 private:
@@ -26,7 +26,7 @@ private:
         fps_text.setColor(Color255::White);
         fps_text.setFontSize(4.5);
 
-        elipse = Elipse(30, 40, 10, 6, 3);
+        elipse = Elipse(30, 40, 100, 60, 3);
         elipse.SetOutlineColor(Color255::White);
         elipse.SetPivot({0.5, 0.5});
     }
@@ -76,7 +76,7 @@ private:
             turnSpeed = 150;
             boostTimer += deltaTime;
 
-            elipse.SetOutlineColor(colorCounter++ % 255);
+            elipse.SetFillColor(colorCounter++ % 255);
 
             if(boostTimer >= 1)
             {
@@ -85,7 +85,7 @@ private:
                 boost = false;
                 boostTimer = 0;
 
-                elipse.SetOutlineColor(Color255::White);
+                elipse.SetFillColor(Color255::Transparent);
             }
         }
     }

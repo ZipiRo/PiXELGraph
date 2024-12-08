@@ -80,14 +80,7 @@ void FillShape(Screen &screen, const Box &boundingBox, const std::vector<Vector2
             }
         }
 
-        for(int i = 0; i < count; i++)
-            for(int j = 0; j < count; j++)
-                if(intersections[i] < intersections[j])
-                {
-                    int aux = intersections[i];
-                    intersections[i] = intersections[j];
-                    intersections[j] = aux;
-                }
+        HeapSort(intersections, count);
 
         for(int i = 0; i + 1 < count; i += 2)
         {   

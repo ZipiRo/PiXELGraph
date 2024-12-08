@@ -28,7 +28,9 @@ const int MIN_INT = -2147483647;
 #include "Vector2.h"
 //
 
-// Graphics Lybraryes
+#include "Utils.h"
+
+// Graphics Libraryes
 #include "Font.h"
 #include "Box.h"
 #include "Color.h"
