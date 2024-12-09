@@ -127,7 +127,7 @@ public:
 
         for (int key = 0; key < 256; ++key) 
         {
-            bool isCurrentlyPressed = WindowsApi::GetAsyncKeyState(key) & 0x8000;
+            bool isCurrentlyPressed = winapi::GetAsyncKeyState(key) & 0x8000;
             keyStates[Keyboard(key)].isPressed = isCurrentlyPressed;
         }
 
@@ -136,15 +136,15 @@ public:
             state.wasPressed = state.isPressed;
         }
 
-        mouseButtonStates[Mouse::Left].isPressed = WindowsApi::GetAsyncKeyState(VK_LBUTTON) & 0x8000;
-        mouseButtonStates[Mouse::Right].isPressed = WindowsApi::GetAsyncKeyState(VK_RBUTTON) & 0x8000;
-        mouseButtonStates[Mouse::Middle].isPressed = WindowsApi:: GetAsyncKeyState(VK_MBUTTON) & 0x8000;
+        mouseButtonStates[Mouse::Left].isPressed = winapi::GetAsyncKeyState(VK_LBUTTON) & 0x8000;
+        mouseButtonStates[Mouse::Right].isPressed = winapi::GetAsyncKeyState(VK_RBUTTON) & 0x8000;
+        mouseButtonStates[Mouse::Middle].isPressed = winapi:: GetAsyncKeyState(VK_MBUTTON) & 0x8000;
 
-        WindowsApi::POINT point;
-        if (WindowsApi::GetCursorPos(&point)) 
+        winapi::POINT point;
+        if (winapi::GetCursorPos(&point)) 
         {
-            WindowsApi::HWND hwnd = WindowsApi::GetForegroundWindow();
-            if (hwnd && WindowsApi::ScreenToClient(hwnd, &point)) 
+            winapi::HWND hwnd = winapi::GetForegroundWindow();
+            if (hwnd && winapi::ScreenToClient(hwnd, &point)) 
             {
                 mousePositionX = point.x;
                 mousePositionY = point.y;

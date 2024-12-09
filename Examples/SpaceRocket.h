@@ -5,17 +5,18 @@ class Game : public Engine
 public:
     Game()
     {
-        this->FPS = 60;
+        this->FPS = 61;
         this->timeScale = 1;
         this->screenColor = Color256::White;
 
-        Init(300, 200);
+        Init(450, 300);
     }
 
 private:
     Font font;
     Text fps_text;
     
+    Rectangle cursor;
     Elipse elipse;
 
     void OnStart() override
@@ -27,6 +28,10 @@ private:
 
         elipse = Elipse(30, 40, 10, 6, 3);
         elipse.SetPivot({0.5, 0.5});
+
+        cursor = Rectangle(0, 0, 4, 4);
+        cursor.SetPivot({0.5, 0.5});
+        cursor.SetFillColor(Color256::Red);
     }
 
     bool boost = false;
@@ -37,7 +42,8 @@ private:
     float speed = 40;
     float turnSpeed = 100;
     Vector2 mousePosition;
-    Vector2 worldMousePosition;
+    Vector2 screenMousePosition;
+    int fontSize = 2;
 
     void OnUpdate(float deltaTime) override
     {   
@@ -45,11 +51,14 @@ private:
             running = false;
 
         mousePosition = Vector2(input.GetMousePositionX(), input.GetMousePositionY());
+        screenMousePosition = WindowToCanvasMousePosition(mousePosition, fontSize);
+
+        cursor.GetTransform().MoveTo(screenMousePosition);
 
         frameTimer += deltaTime;
         if(frameTimer >= 1)
         {
-            fps_text.setString("FPS " + std::to_string(int(1 / deltaTime * timeScale)));
+            fps_text.setString("FPS " + std::to_string(int(1 / deltaTime)));
             frameTimer = 0;
         }
 
@@ -90,9 +99,8 @@ private:
     void OnDraw(Screen &screen) override
     {
         elipse.Draw(screen);
+        cursor.Draw(screen);
         fps_text.Draw(screen);
-
-        DrawThickLine(screen, 0, 0, mousePosition.x, mousePosition.y, 2, Color256::Green);
     }
 
     void OnQuit() override

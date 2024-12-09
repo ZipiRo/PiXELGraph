@@ -1,6 +1,6 @@
 #pragma once
 
-namespace WindowsApi
+namespace winapi
 {
     #include <windows.h>
 }
@@ -8,6 +8,11 @@ namespace WindowsApi
 #include "InputSystem.h"
 #include "Timer.h"
 #include "Screen.h"
+
+Vector2 WindowToCanvasMousePosition(const Vector2 &mousePosition, int fontSize)
+{
+    return (mousePosition / fontSize) - Vector2(8 - (fontSize / 0.6), 49.5 / fontSize);
+}
 
 class Engine
 {
