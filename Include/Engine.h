@@ -59,7 +59,7 @@ void Engine::Run()
             CLEAR_CONSOLE
 
         timer.Tick();
-        if(timer.DeltaTime() >= 1 / FPS)
+        if(timer.DeltaTime() >= 1.0 / FPS)
         {
             timer.Reset();
             this->OnUpdate(timer.DeltaTime());

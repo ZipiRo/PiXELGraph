@@ -5,7 +5,7 @@ class Game : public Engine
 public:
     Game()
     {
-        this->FPS = 61;
+        this->FPS = 60;
         this->timeScale = 1;
         this->screenColor = Color256::White;
 
