@@ -104,7 +104,7 @@ void Transform::Rotate(float amount)
 
 void Transform::RotateTo(float angle)
 {
-    angle = NormalizeAngle(angle);
+    this->angle = NormalizeAngle(angle);
     this->update = true;
 }
 
