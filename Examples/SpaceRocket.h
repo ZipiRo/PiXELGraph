@@ -39,7 +39,6 @@ public:
     float turnSpeed = 100;
     Vector2 mousePosition;
     Vector2 screenMousePosition;
-    int fontSize = 2;
 
     Vector2 direction;
     float angle;
@@ -50,7 +49,7 @@ public:
             running = false;
 
         mousePosition = Vector2(input.GetMousePositionX(), input.GetMousePositionY());
-        screenMousePosition = mousePosition / fontSize;
+        screenMousePosition = mousePosition / this->fontSize;
         
         direction = screenMousePosition - elipse.GetTransform().position;
         angle = atan2(direction.y, direction.x);
