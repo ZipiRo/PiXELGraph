@@ -5,9 +5,6 @@
 #define RESET_CURSOR_POSITION "\e[H";
 #define RESET_PIXEL = "\e[0m";
 
-const int MAX_WIDTH = 500;
-const int MAX_HEIGHT = 500;
-
 class Screen
 {
 private:  
@@ -35,8 +32,8 @@ Screen::Screen()
 
 Screen::Screen(int width, int height)
 {
-    this->width = (width > MAX_WIDTH) ? MAX_WIDTH : width;
-    this->height = (height > MAX_HEIGHT) ? MAX_HEIGHT : height;
+    this->width = (width > MAX_WIDTH) ? MAX_WIDTH : width - 1;
+    this->height = (height > MAX_HEIGHT) ? MAX_HEIGHT : height - 1;
     this->screen = std::vector<Color>(this->width * this->height);
 }
 

@@ -1,6 +1,6 @@
 #include "../Include/PixelGraph.h"
 
-class Game : public Engine
+class Game : public PiXELGraph
 {
 public:
     Game()

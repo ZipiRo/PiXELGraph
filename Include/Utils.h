@@ -1,3 +1,6 @@
+const float DEG_TO_RAD = PI / 180.0f;
+const float RAD_TO_DEG = 180.0f / PI;
+
 void heapify(int arr[], int n, int i) 
 {
     int largest = i;       // Initialize largest as root
@@ -26,7 +29,6 @@ void heapify(int arr[], int n, int i)
     }
 }
 
-// Function to implement heap sort
 void HeapSort(int arr[], int n) 
 {
     // Build max-heap (rearrange the array)

@@ -1,6 +1,6 @@
 #include "../Include/PixelGraph.h"
 
-class Game : public Engine
+class Game : public PiXELGraph
 {
 public:
     Game()
@@ -8,15 +8,15 @@ public:
         this->FPS = 60;
         this->timeScale = 1;
         this->screenColor = Color256::White;
+        this->fontSize = 3;
+        this->title = "SpaceRocket";
 
-        Init(450, 300);
+        Init(400, 225);
     }
 
-private:
     Font font;
     Text fps_text;
     
-    Rectangle cursor;
     Elipse elipse;
 
     void OnStart() override
@@ -26,12 +26,8 @@ private:
         fps_text.setFont(font);
         fps_text.setFontSize(4.5);
 
-        elipse = Elipse(30, 40, 10, 6, 3);
+        elipse = Elipse(30, 40, 10, 6, 5);
         elipse.SetPivot({0.5, 0.5});
-
-        cursor = Rectangle(0, 0, 4, 4);
-        cursor.SetPivot({0.5, 0.5});
-        cursor.SetFillColor(Color256::Red);
     }
 
     bool boost = false;
@@ -45,15 +41,21 @@ private:
     Vector2 screenMousePosition;
     int fontSize = 2;
 
+    Vector2 direction;
+    float angle;
+
     void OnUpdate(float deltaTime) override
     {   
         if(input.isKeyDown(Keyboard::Key_Escape))
             running = false;
 
         mousePosition = Vector2(input.GetMousePositionX(), input.GetMousePositionY());
-        screenMousePosition = WindowToCanvasMousePosition(mousePosition, fontSize);
+        screenMousePosition = mousePosition / fontSize;
+        
+        direction = screenMousePosition - elipse.GetTransform().position;
+        angle = atan2(direction.y, direction.x);
 
-        cursor.GetTransform().MoveTo(screenMousePosition);
+        elipse.GetTransform().RotateTo(angle);
 
         frameTimer += deltaTime;
         if(frameTimer >= 1)
@@ -65,11 +67,11 @@ private:
         if(input.isKeyDown(Keyboard::Key_Space))
             boost = true;
 
-        if(input.isKeyDown(Keyboard::Key_A))
-            elipse.GetTransform().Rotate(-turnSpeed * DEG_TO_RAD * deltaTime);
+        // if(input.isKeyDown(Keyboard::Key_A))
+        //     elipse.GetTransform().Rotate(-turnSpeed * DEG_TO_RAD * deltaTime);
 
-        if(input.isKeyDown(Keyboard::Key_D))
-            elipse.GetTransform().Rotate(turnSpeed * DEG_TO_RAD * deltaTime);
+        // if(input.isKeyDown(Keyboard::Key_D))
+        //     elipse.GetTransform().Rotate(turnSpeed * DEG_TO_RAD * deltaTime);
             
         if(input.isKeyDown(Keyboard::Key_W))
             elipse.GetTransform().Move(elipse.GetTransform().right * speed * deltaTime);
@@ -79,8 +81,8 @@ private:
 
         if(boost)
         {
-            speed = 200;
-            turnSpeed = 150;
+            speed = 300;
+            turnSpeed = 250;
             boostTimer += deltaTime;
 
             elipse.SetFillColor(colorCounter++ % 255);
@@ -99,8 +101,10 @@ private:
     void OnDraw(Screen &screen) override
     {
         elipse.Draw(screen);
-        cursor.Draw(screen);
         fps_text.Draw(screen);
+
+        DrawLine(screen, elipse.GetTransformVertices()[0].x, elipse.GetTransformVertices()[0].y, screenMousePosition.x, screenMousePosition.y, Color256::LightRed);
+        screen.PlotPixel(screenMousePosition.x, screenMousePosition.y, Color256::Black);
     }
 
     void OnQuit() override

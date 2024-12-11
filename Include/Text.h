@@ -51,7 +51,7 @@ private:
     std::vector<Vector2> vertices;
     std::vector<Vector2> transformedVertices;
     std::vector<int> indices;
-    std::string currentString;
+    std::string string;
 
     Transform transform;
     Box boundingBox;
@@ -88,8 +88,8 @@ Text::Text(float x, float y)
 
 void Text::setString(const std::string &string)
 {
-    CreateTextVertices(string, vertices, indices, font);
-    currentString = string;
+    this->string = string;
+    CreateTextVertices(this->string, vertices, indices, font);
     transform.update = true;
 }
 
@@ -161,5 +161,5 @@ void Text::setFontSize(float size)
 
 std::string Text::getCurrentString()
 {
-    return this->currentString;
+    return this->string;
 }

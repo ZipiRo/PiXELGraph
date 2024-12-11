@@ -1,6 +1,5 @@
 #pragma once
 
-// System Libraryes
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -10,27 +9,28 @@
 #include <chrono>
 #include <vector>
 #include <list>
-#include <conio.h>
-//
+#include "nlohmann/json.hpp"
 
-// Other Libraryes
+namespace winapi 
+{
+    #include <windows.h>
+}
 
-// Constants
 const float PI = 3.1415926535f;
-const float DEG_TO_RAD = PI / 180.0f;
-const float RAD_TO_DEG = 180.0f / PI;
 
 const int MAX_INT = 2147483647;
 const int MIN_INT = -2147483647;
-//
 
-// Math Libraryes
+const int MAX_WIDTH = 1000;
+const int MAX_HEIGHT = 1000;
+
+#include "ConsoleWindow.h"
+#include "InputSystem.h"
+#include "Timer.h"
+
 #include "Vector2.h"
-//
-
 #include "Utils.h"
 
-// Graphics Libraryes
 #include "Font.h"
 #include "Box.h"
 #include "Color.h"
@@ -41,8 +41,69 @@ const int MIN_INT = -2147483647;
 #include "Polygon.h"
 #include "Rectangle.h"
 #include "Elpise.h"
-//
 
-// Engine
-#include "Engine.h"
-//
+class PiXELGraph
+{
+protected:
+    ConsoleWindow window;
+    InputSystem input;
+
+    float timeScale = 1.0;
+    float FPS = 60;
+
+    int fontSize = 2;
+
+    Color screenColor = Color256::White;
+    
+    std::string title = "Demo";
+
+    bool running;
+
+    void Init(int width, int height);
+private:
+    Screen screen;
+    Timer timer;
+
+public:
+    virtual void OnStart() = 0;
+    virtual void OnUpdate(float deltaTime) = 0;
+    virtual void OnDraw(Screen &screen) = 0;
+    virtual void OnQuit() = 0;
+
+    void Run();
+};
+
+void PiXELGraph::Init(int width, int height)
+{
+    this->running = true;
+
+    this->timer = Timer(this->timeScale);
+    this->window = ConsoleWindow(width, height, fontSize, fontSize, title);
+    this->screen = Screen(width, height);
+}
+
+void PiXELGraph::Run()
+{
+    this->OnStart();
+
+    while (running)
+    {
+        input.PollInput();
+
+        if(input.isKeyPressed(Keyboard::Key_Delete))
+            CLEAR_CONSOLE
+
+        timer.Tick();
+        if(timer.DeltaTime() >= 1.0 / FPS)
+        {
+            timer.Reset();
+            this->OnUpdate(timer.DeltaTime());
+        }
+
+        screen.Clear(screenColor);
+        this->OnDraw(screen);
+        screen.Display();
+    }
+
+    this->OnQuit();
+}
