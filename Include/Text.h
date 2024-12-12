@@ -51,7 +51,7 @@ private:
     std::vector<Vector2> vertices;
     std::vector<Vector2> transformedVertices;
     std::vector<int> indices;
-    std::string currentString;
+    std::string string;
 
     Transform transform;
     Box boundingBox;
@@ -69,12 +69,12 @@ public:
 
     Transform &Transform();
 
-    void setFont(const Font &font);
-    void setString(const std::string &string);
-    void setColor(Color color);
-    void setFontWeight(int weight);
-    void setFontSize(float size);
-    std::string getCurrentString();
+    void SetFont(const Font &font);
+    void SetString(const std::string &string);
+    void SetColor(Color color);
+    void SetFontWeight(int weight);
+    void SetFontSize(float size);
+    std::string GetCurrentString();
 };
 
 Text::Text(float x, float y)
@@ -86,10 +86,10 @@ Text::Text(float x, float y)
     this->fontColor = Black;
 }
 
-void Text::setString(const std::string &string)
+void Text::SetString(const std::string &string)
 {
-    CreateTextVertices(string, vertices, indices, font);
-    currentString = string;
+    this->string = string;
+    CreateTextVertices(this->string, vertices, indices, font);
     transform.update = true;
 }
 
@@ -139,27 +139,27 @@ Transform &Text::Transform()
     return this->transform;
 }
 
-void Text::setFont(const Font &font)
+void Text::SetFont(const Font &font)
 {
     this->font = font;
 }
 
-void Text::setColor(Color color)
+void Text::SetColor(Color color)
 {
     this->fontColor = color;
 }
 
-void Text::setFontWeight(int weight)
+void Text::SetFontWeight(int weight)
 {
     this->fontWeight = weight;
 }
 
-void Text::setFontSize(float size)
+void Text::SetFontSize(float size)
 {
     this->transform.ScaleTo({size, size});
 }
 
-std::string Text::getCurrentString()
+std::string Text::GetCurrentString()
 {
-    return this->currentString;
+    return this->string;
 }

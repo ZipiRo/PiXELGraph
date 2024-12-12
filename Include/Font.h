@@ -1,3 +1,5 @@
+#pragma once
+
 struct Glyph
 {
     std::vector<Vector2> vertices;

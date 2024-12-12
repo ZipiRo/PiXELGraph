@@ -1,13 +1,9 @@
 #pragma once
 
-#define RESET_CURSOR_POSITION std::cout << "\033[H";
-#define CLEAR_CONSOLE std::cout << "\033[2J";\
+#define CLEAR_CONSOLE std::cout << "\e[2J";
 
-const std::string RESET_PIXEL = "\033[0m";
-const char NEW_LINE = '\n';
-
-const int MAX_WIDTH = 500;
-const int MAX_HEIGHT = 300;
+#define RESET_CURSOR_POSITION "\e[H";
+#define RESET_PIXEL = "\e[0m";
 
 class Screen
 {
@@ -22,7 +18,7 @@ public:
     Screen(int width, int height);
 
     void Display();
-    void Clear(Color color = White);
+    void Clear(Color color = Color256::White);
     void PlotPixel(int x, int y, Color color);
     int GetWidth();
     int GetHeight();
@@ -36,26 +32,34 @@ Screen::Screen()
 
 Screen::Screen(int width, int height)
 {
-    this->width = (width > MAX_WIDTH) ? MAX_WIDTH : width;
-    this->height = (height > MAX_HEIGHT) ? MAX_HEIGHT : height;
+    this->width = (width > MAX_WIDTH) ? MAX_WIDTH : width - 1;
+    this->height = (height > MAX_HEIGHT) ? MAX_HEIGHT : height - 1;
     this->screen = std::vector<Color>(this->width * this->height);
 }
 
 void Screen::Display()
 {
-    RESET_CURSOR_POSITION // RESET CURSOR POSITION
-    
-    std::string buffer; // MAKE A BUFFER
-    buffer.reserve(width * height * 20);
+    std::ostringstream buffer;
+    buffer << RESET_CURSOR_POSITION;
 
-    for(int i = 0; i < width * height; i++) // ITTERATE THE SCREEN
+    int prevColor = -1; // Store the previous pixel's color
+    for (int i = 0; i < width * height; i++)
     {
-        buffer += ToAnsi(screen[i]) + ' ' + RESET_PIXEL; // ADD TO BUFFER COLORED PIXEL, A SPACE AND RESET THE PIXEL
-        if((i + 1) % width == 0) 
-            buffer += NEW_LINE; // ADD TO BUFFER NEW LINE IF WE GOT TO THE WIDTH LIMIT
+        if (screen[i] != prevColor)
+        {
+            buffer << "\e[48;5;" << screen[i] << "m"; // Set color only when it changes
+            prevColor = screen[i];
+        }
+        buffer << ' '; // Draw pixel (space)
+
+        if ((i + 1) % width == 0)
+        {
+            buffer << "\e[0m\n"; // Reset formatting at end of row
+            prevColor = -1; // Force color reset for the next row
+        }
     }
 
-    std::cout << buffer; // THROW EVERYTHING AT ONCE AT THE CONSOLE
+    std::cout << buffer.str();
 }
 
 void Screen::Clear(Color color)
