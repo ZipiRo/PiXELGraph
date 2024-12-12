@@ -1,2 +1,6 @@
-.gitignore
-/Build/
+*.exe
+*.out
+*.dll
+*.bat
+/build/
+.vscode/
