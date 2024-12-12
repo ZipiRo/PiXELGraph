@@ -9,69 +9,71 @@ private:
 
     int ConsoleScreenWidth;
     int ConsoleScreenHeight;
+    int ConsoleFontWidth;
+    int ConsoleFontHeight;
 
-    bool ConstructConsole(int width, int height, int fontWidth, int fontHeight, const char* title);
+    std::wstring ConsoleTitle;
+
+    bool ConstructConsole();
+
 public:
     ConsoleWindow() {}
-    ConsoleWindow(int width, int height, int fontWidth, int fontHeight, const std::string &title);
+    ConsoleWindow(int width, int height, int fontWidth, int fontHeight, const std::wstring &title)
+    {
+        this->ConsoleOutputHandle = winapi::GetStdHandle((winapi::DWORD)-11);
+        this->ConsoleInputHandle = winapi::GetStdHandle((winapi::DWORD)-10);
+
+        this->ConsoleScreenWidth = (width > MAX_WIDTH) ? MAX_WIDTH : width;
+        this->ConsoleScreenHeight = (height > MAX_HEIGHT) ? MAX_HEIGHT : height;
+
+        this->ConsoleFontWidth = fontWidth;
+        this->ConsoleFontHeight = fontHeight;
+
+        this->ConsoleTitle = title;
+
+        if(!ConstructConsole());
+    }
 
     winapi::HANDLE GetOutputHandle();
     winapi::HANDLE GetInputHandle();
 };
 
-ConsoleWindow::ConsoleWindow(int width, int height, int fontWidth, int fontHeight, const std::string &title)
+bool ConsoleWindow::ConstructConsole()
 {
-    if(!ConstructConsole(width, height, fontWidth, fontHeight, title.c_str()));
-}
-
-bool ConsoleWindow::ConstructConsole(int width, int height, int fontWidth, int fontHeight, const char *title)
-{
-    this->ConsoleOutputHandle = winapi::GetStdHandle((winapi::DWORD)-11);
-    this->ConsoleInputHandle = winapi::GetStdHandle((winapi::DWORD)-10);
-    this->ConsoleScreenWidth = (width > MAX_WIDTH) ? MAX_WIDTH : width;
-    this->ConsoleScreenHeight = (height > MAX_HEIGHT) ? MAX_HEIGHT : height;
-    
-    if(ConsoleInputHandle == ((winapi::HANDLE) (winapi::LONG_PTR)-1))
+    if(ConsoleOutputHandle == ((winapi::HANDLE) (winapi::LONG_PTR)-1))
         return 0;
 
     this->WindowRect = {0, 0, 1, 1};
     SetConsoleWindowInfo(ConsoleOutputHandle, TRUE, &WindowRect);
 
-    // SET TITLE
-    wchar_t s[256] = {0};
-    swprintf_s(s, 256, L"PiXELGraph");
+    wchar_t s[256];
+    swprintf_s(s, 256, L"PiXELGraph - %s", ConsoleTitle.c_str());
     winapi::SetConsoleTitleW(s);
     
     winapi::COORD coord = {(short)ConsoleScreenWidth, (short)ConsoleScreenHeight};
-    if(!winapi::SetConsoleScreenBufferSize(ConsoleOutputHandle, coord))
-        return 0;
+    if(!winapi::SetConsoleScreenBufferSize(ConsoleOutputHandle, coord)) return 0;
 
-    if(!winapi::SetConsoleActiveScreenBuffer(ConsoleOutputHandle))
-        return 0;
+    if(!winapi::SetConsoleActiveScreenBuffer(ConsoleOutputHandle)) return 0;
 
     winapi::CONSOLE_FONT_INFOEX consoleFontInfo;
     consoleFontInfo.cbSize = sizeof(consoleFontInfo);
     consoleFontInfo.nFont = 0;
-    consoleFontInfo.dwFontSize.X = fontWidth;
-    consoleFontInfo.dwFontSize.Y = fontHeight;
+    consoleFontInfo.dwFontSize.X = ConsoleFontWidth;
+    consoleFontInfo.dwFontSize.Y = ConsoleFontHeight;
     consoleFontInfo.FontFamily = FF_DONTCARE;
     consoleFontInfo.FontWeight = FW_NORMAL;
 
     wcscpy(consoleFontInfo.FaceName, L"Consolas"); 
-    if(!winapi::SetCurrentConsoleFontEx(ConsoleOutputHandle, FALSE, &consoleFontInfo))
-        return 0;
-    
-    // NO RESIZE
+    if(!winapi::SetCurrentConsoleFontEx(ConsoleOutputHandle, FALSE, &consoleFontInfo)) return 0;
+
     winapi::LONG style = winapi::GetWindowLong(winapi::GetConsoleWindow(), GWL_STYLE);
     style &= ~(WS_SIZEBOX | WS_MAXIMIZEBOX);
 
     winapi::SetWindowLong(winapi::GetConsoleWindow(), GWL_STYLE, style);
     winapi::SetWindowPos(winapi::GetConsoleWindow(), nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
-    //
     
     this->WindowRect = {0, 0, (short)(ConsoleScreenWidth - 1), (short)(ConsoleScreenHeight - 1)};
-    if(winapi::SetConsoleWindowInfo(ConsoleOutputHandle, TRUE, &WindowRect))
-        return 0;
+    if(winapi::SetConsoleWindowInfo(ConsoleOutputHandle, TRUE, &WindowRect)) return 0;
 
     return 1;
 }

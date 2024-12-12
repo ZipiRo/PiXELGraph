@@ -48,16 +48,14 @@ protected:
     ConsoleWindow window;
     InputSystem input;
 
+    std::wstring windowTitle = L"Demo";
     float timeScale = 1.0;
     float FPS = 60;
-
     int fontSize = 2;
 
-    Color screenColor = Color256::White;
-    
-    std::string title = "Demo";
+    Color screenColor = Color256::White; // MAke a screen function
 
-    bool running;
+    bool running; // Quit
 
     void Init(int width, int height);
 private:
@@ -78,7 +76,7 @@ void PiXELGraph::Init(int width, int height)
     this->running = true;
 
     this->timer = Timer(this->timeScale);
-    this->window = ConsoleWindow(width, height, fontSize, fontSize, title);
+    this->window = ConsoleWindow(width, height, fontSize, fontSize, windowTitle);
     this->screen = Screen(width, height);
 }
 

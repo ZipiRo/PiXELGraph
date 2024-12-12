@@ -1,15 +1,5 @@
 #pragma once
 
-float NormalizeAngle(float angle) 
-{
-    angle = angle - floor(angle / (2.0f * PI)) * (2.0f * PI);
-    
-    if (angle < 0)
-        angle += 2.0f * PI;
-    
-    return angle;
-}
-
 class Transform
 {
 protected:

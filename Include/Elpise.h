@@ -84,7 +84,6 @@ void Elipse::Draw(Screen &screen)
         DrawLines(screen, transformedVertices, outlineColor, outlineThickness);
 }
 
-
 void Elipse::SetPivot(Vector2 pivot)
 {
     vertices = CreateElipseVertices(this->radiusX, this->radiusY, point_count, pivot.x, pivot.y);
