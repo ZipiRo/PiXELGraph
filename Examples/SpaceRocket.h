@@ -14,16 +14,16 @@ public:
     }
 
     Font font;
-    Text fps_text;
+    Text T_FPS;
     
     Shape *player;
 
     void OnStart() override
     {
         font = Font("Resources/basic.f2p");
-        fps_text = Text(1, 1);
-        fps_text.SetFont(font);
-        fps_text.SetFontSize(4.5);
+        T_FPS = Text(1, 1);
+        T_FPS.SetFont(font);
+        T_FPS.SetFontSize(4.5);
 
         player = new Rectangle(30, 40, 10, 6);
         player->SetFillColor(Color256::Red);
@@ -31,41 +31,37 @@ public:
     }
 
     bool boost = false;
-    bool slowmo = false;
+    bool slowmo = false; 
 
-    Color colorCounter = 0;
-    float boostTimer = 0;
     float frameTimer = 1;
-    float speed = 100;
-    float turnSpeed = 100;
+    float slowmoTimer = 0;
+    float boostTimer = 0;
+
     Vector2 mousePosition;
     Vector2 screenMousePosition;
-
-    float slowmoTimer = 0;
-
     Vector2 direction;
+
     float angle;
+    float turnSpeed = 100;
+    float speed = 100;
+
+    Color colorCounter = 0;
 
     void OnUpdate(float deltaTime) override
     {   
         if(input.isKeyDown(Keyboard::Key_Escape))
             Quit();
 
-        mousePosition = Vector2(input.GetMousePositionX(), input.GetMousePositionY());
-        screenMousePosition = mousePosition / FontSize();
-        
-        direction = screenMousePosition - player->GetTransform().position;
-        angle = atan2(direction.y, direction.x);
-
-        player->GetTransform().RotateTo(angle);
-
         frameTimer += deltaTime;
         if(frameTimer >= 1)
         {
             SetWindowTitle(windowTitle + L" | FPS: " + std::to_wstring(int(1 / deltaTime * timeScale)) + L" fps");
-            fps_text.SetString("FPS " + std::to_string(int(1 / deltaTime * timeScale)));
+            T_FPS.SetString("FPS " + std::to_string(int(1 / deltaTime * timeScale)));
             frameTimer = 0;
         }
+
+        mousePosition = Vector2(input.GetMousePositionX(), input.GetMousePositionY());
+        screenMousePosition = mousePosition / FontSize();
 
         if(input.isKeyDown(Keyboard::Key_W))
             player->GetTransform().Move(player->GetTransform().right * speed * deltaTime);
@@ -75,7 +71,7 @@ public:
             player->GetTransform().Move(player->GetTransform().up * speed * deltaTime);
         if(input.isKeyDown(Keyboard::Key_D))
             player->GetTransform().Move(-player->GetTransform().up * speed * deltaTime);
-        
+
         if(input.isKeyDown(Keyboard::Key_Q))
         {
             SetTimeScale(0.5);
@@ -85,6 +81,11 @@ public:
 
         if(input.isKeyDown(Keyboard::Key_Space))
             boost = true;
+        
+        direction = screenMousePosition - player->GetTransform().position;
+        angle = atan2(direction.y, direction.x);
+
+        player->GetTransform().RotateTo(angle);
 
         if(slowmo)
         {
@@ -101,7 +102,7 @@ public:
 
         if(boost)
         {
-            speed = 700;
+            speed = 200;
             turnSpeed = 150;
             boostTimer += deltaTime;
 
@@ -118,7 +119,7 @@ public:
     void OnDraw(Screen &screen) override
     {
         player->Draw(screen);
-        fps_text.Draw(screen);
+        T_FPS.Draw(screen);
         
         screen.PlotPixel(screenMousePosition.x, screenMousePosition.y, Color256::Black);
     }
