@@ -5,76 +5,100 @@ class Game : public PiXELGraph
 public:
     Game()
     {
+        this->backgroundColor = Color256::LightYellow; 
         this->windowTitle = L"SpaceRocket v1.0";
-        this->FPS = 120;
         this->timeScale = 1;
-        this->screenColor = Color256::White;
-        this->fontSize = 2;
+        this->FPS = 60;
 
-        Init(400, 225);
+        Init(640 / 3, 480 / 3, 3);
     }
 
     Font font;
-    Text fps_text;
+    Text T_FPS;
     
-    Elipse elipse;
+    Shape *player;
 
     void OnStart() override
     {
         font = Font("Resources/basic.f2p");
-        fps_text = Text(1, 1);
-        fps_text.SetFont(font);
-        fps_text.SetFontSize(4.5);
+        T_FPS = Text(1, 1);
+        T_FPS.SetFont(font);
+        T_FPS.SetFontSize(4.5);
 
-        elipse = Elipse(30, 40, 10, 6, 3);
-        elipse.SetFillColor(Color256::Red);
-        elipse.SetPivot({0.5, 0.5});
+        player = new Rectangle(30, 40, 10, 6);
+        player->SetFillColor(Color256::Red);
+        player->SetPivot({0.5, 0.5});
     }
 
     bool boost = false;
+    bool slowmo = false; 
 
-    Color colorCounter = 0;
-    float boostTimer = 0;
     float frameTimer = 1;
-    float speed = 100;
-    float turnSpeed = 100;
+    float slowmoTimer = 0;
+    float boostTimer = 0;
+
     Vector2 mousePosition;
     Vector2 screenMousePosition;
-
     Vector2 direction;
+
     float angle;
+    float turnSpeed = 100;
+    float speed = 100;
+
+    Color colorCounter = 0;
 
     void OnUpdate(float deltaTime) override
     {   
         if(input.isKeyDown(Keyboard::Key_Escape))
-            running = false;
-
-        mousePosition = Vector2(input.GetMousePositionX(), input.GetMousePositionY());
-        screenMousePosition = mousePosition / this->fontSize;
-        
-        direction = screenMousePosition - elipse.GetTransform().position;
-        angle = atan2(direction.y, direction.x);
-
-        elipse.GetTransform().RotateTo(angle);
+            Quit();
 
         frameTimer += deltaTime;
         if(frameTimer >= 1)
         {
-            fps_text.SetString("FPS " + std::to_string(int(1 / deltaTime)));
+            SetWindowTitle(windowTitle + L" | FPS: " + std::to_wstring(int (1 / deltaTime)) + L" | DT: " + std::to_wstring(deltaTime) + L" MS");
+            T_FPS.SetString("FPS " + std::to_string(int(1 / deltaTime)));
             frameTimer = 0;
         }
 
+        mousePosition = Vector2(input.GetMousePositionX(), input.GetMousePositionY());
+        screenMousePosition = mousePosition / FontSize();
+
         if(input.isKeyDown(Keyboard::Key_W))
-            elipse.GetTransform().Move(elipse.GetTransform().right * speed * deltaTime);
+            player->GetTransform().Move(player->GetTransform().right * speed * deltaTime);
         if(input.isKeyDown(Keyboard::Key_S))
-            elipse.GetTransform().Move(-elipse.GetTransform().right * speed * deltaTime);
+            player->GetTransform().Move(-player->GetTransform().right * speed * deltaTime);
         if(input.isKeyDown(Keyboard::Key_A))
-            elipse.GetTransform().Move(elipse.GetTransform().up * speed * deltaTime);
+            player->GetTransform().Move(player->GetTransform().up * speed * deltaTime);
         if(input.isKeyDown(Keyboard::Key_D))
-            elipse.GetTransform().Move(-elipse.GetTransform().up * speed * deltaTime);
-            
+            player->GetTransform().Move(-player->GetTransform().up * speed * deltaTime);
+
+        if(input.isKeyDown(Keyboard::Key_Q))
+        {
+            SetTimeScale(0.5);
+            player->SetFillColor(Color256::LightBlue);
+            slowmo = true;
+        }
+
         if(input.isKeyDown(Keyboard::Key_Space))
             boost = true;
+        
+        direction = screenMousePosition - player->GetTransform().position;
+        angle = atan2(direction.y, direction.x);
+
+        player->GetTransform().RotateTo(angle);
+
+        if(slowmo)
+        {
+            slowmoTimer += deltaTime;
+
+            if(slowmoTimer >= 2)
+            {
+                SetTimeScale(1);
+                player->SetFillColor(Color256::Red);
+                slowmo = false;
+                slowmoTimer = 0;
+            }
+        }
 
         if(boost)
         {
@@ -94,14 +118,14 @@ public:
 
     void OnDraw(Screen &screen) override
     {
-        elipse.Draw(screen);
-        fps_text.Draw(screen);
+        player->Draw(screen);
+        T_FPS.Draw(screen);
         
         screen.PlotPixel(screenMousePosition.x, screenMousePosition.y, Color256::Black);
     }
 
     void OnQuit() override
     {
-
+        delete player;
     }
 };

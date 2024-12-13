@@ -19,7 +19,7 @@ private:
 
     void OnUpdate(float deltaTime) override
     {   
-       // Update Things
+        // Update Things
     }
 
     void OnDraw(Screen &screen) override
