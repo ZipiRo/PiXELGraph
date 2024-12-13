@@ -36,6 +36,16 @@ public:
 
     winapi::HANDLE GetOutputHandle();
     winapi::HANDLE GetInputHandle();
+
+    //focus
+
+    void SetTitle(const std::wstring &title)
+    {
+        this->ConsoleTitle = title;
+        wchar_t s[256];
+        swprintf_s(s, 256, L"PiXELGraph - %s", ConsoleTitle.c_str());
+        winapi::SetConsoleTitleW(s);
+    }
 };
 
 bool ConsoleWindow::ConstructConsole()
@@ -46,10 +56,6 @@ bool ConsoleWindow::ConstructConsole()
     this->WindowRect = {0, 0, 1, 1};
     SetConsoleWindowInfo(ConsoleOutputHandle, TRUE, &WindowRect);
 
-    wchar_t s[256];
-    swprintf_s(s, 256, L"PiXELGraph - %s", ConsoleTitle.c_str());
-    winapi::SetConsoleTitleW(s);
-    
     winapi::COORD coord = {(short)ConsoleScreenWidth, (short)ConsoleScreenHeight};
     if(!winapi::SetConsoleScreenBufferSize(ConsoleOutputHandle, coord)) return 0;
 
@@ -72,8 +78,11 @@ bool ConsoleWindow::ConstructConsole()
     winapi::SetWindowLong(winapi::GetConsoleWindow(), GWL_STYLE, style);
     winapi::SetWindowPos(winapi::GetConsoleWindow(), nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
     
+    SetTitle(ConsoleTitle);
+    
     this->WindowRect = {0, 0, (short)(ConsoleScreenWidth - 1), (short)(ConsoleScreenHeight - 1)};
     if(winapi::SetConsoleWindowInfo(ConsoleOutputHandle, TRUE, &WindowRect)) return 0;
+
 
     return 1;
 }

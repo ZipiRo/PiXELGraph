@@ -45,23 +45,21 @@ const int MAX_HEIGHT = 1000;
 class PiXELGraph
 {
 protected:
-    ConsoleWindow window;
     InputSystem input;
 
+    Color backgroundColor = Color256::White;
     std::wstring windowTitle = L"Demo";
     float timeScale = 1.0;
     float FPS = 60;
-    int fontSize = 2;
 
-    Color screenColor = Color256::White; // MAke a screen function
-
-    bool running; // Quit
-
-    void Init(int width, int height);
+    void Init(int width, int height, int fontSize);
 private:
+    ConsoleWindow window;
     Screen screen;
     Timer timer;
 
+    int fontSize;
+    bool running;
 public:
     virtual void OnStart() = 0;
     virtual void OnUpdate(float deltaTime) = 0;
@@ -69,15 +67,37 @@ public:
     virtual void OnQuit() = 0;
 
     void Run();
+    void Quit();
+
+    void SetScreenBackgroundColor(Color256 color)
+    {
+        this->backgroundColor = color;
+    }
+
+    void SetTimeScale(float timeScale)
+    {
+        this->timeScale = timeScale > 0 ? timeScale : 0.1;
+        this->timer.TimeScale(timeScale);
+    }
+
+    void SetWindowTitle(std::wstring title)
+    {
+        this->window.SetTitle(title);
+    }
+
+    float FontSize() { return this->fontSize; }
 };
 
-void PiXELGraph::Init(int width, int height)
+void PiXELGraph::Init(int width, int height, int fontSize = 2)
 {
-    this->running = true;
+    this->fontSize = fontSize < 2 ? 2 : fontSize;
 
-    this->timer = Timer(this->timeScale);
     this->window = ConsoleWindow(width, height, fontSize, fontSize, windowTitle);
-    this->screen = Screen(width, height);
+    this->screen = Screen(width, height); // use the ConsoleWindow Buffer TODO
+    this->timer = Timer(this->timeScale);
+    this->input = InputSystem(); // use the Console InputHandle TO DO
+
+    this->running = true;
 }
 
 void PiXELGraph::Run()
@@ -98,10 +118,17 @@ void PiXELGraph::Run()
             this->OnUpdate(timer.DeltaTime());
         }
 
-        screen.Clear(screenColor);
+        screen.Clear(backgroundColor);
         this->OnDraw(screen);
         screen.Display();
     }
 
     this->OnQuit();
+}
+
+void PiXELGraph::Quit()
+{
+    this->running = false;
+
+    // Set the window to the default handle TODO
 }
