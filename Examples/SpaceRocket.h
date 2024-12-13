@@ -8,7 +8,7 @@ public:
         this->backgroundColor = Color256::LightYellow; 
         this->windowTitle = L"SpaceRocket v1.0";
         this->timeScale = 1;
-        this->FPS = 120;
+        this->FPS = 60;
 
         Init(640 / 3, 480 / 3, 3);
     }
@@ -55,8 +55,8 @@ public:
         frameTimer += deltaTime;
         if(frameTimer >= 1)
         {
-            SetWindowTitle(windowTitle + L" | FPS: " + std::to_wstring(int(1 / deltaTime * timeScale)) + L" fps");
-            T_FPS.SetString("FPS " + std::to_string(int(1 / deltaTime * timeScale)));
+            SetWindowTitle(windowTitle + L" | FPS: " + std::to_wstring(int (1 / deltaTime)) + L" | DT: " + std::to_wstring(deltaTime) + L" MS");
+            T_FPS.SetString("FPS " + std::to_string(int(1 / deltaTime)));
             frameTimer = 0;
         }
 
