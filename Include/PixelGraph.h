@@ -29,10 +29,10 @@ const int MAX_HEIGHT = 1000;
 #include "Timer.h"
 
 #include "Vector2.h"
+#include "Box.h"
 #include "Utils.h"
 
 #include "Font.h"
-#include "Box.h"
 #include "Color.h"
 #include "Screen.h"
 #include "Transform.h"
@@ -59,6 +59,7 @@ private:
     Timer timer;
 
     int fontSize;
+    Box screenBounds;
     bool running;
 public:
     virtual void OnStart() = 0;
@@ -80,20 +81,27 @@ public:
         this->timer.TimeScale(timeScale);
     }
 
+    //todo dont refresh scereen func
+
     void SetWindowTitle(std::wstring title)
     {
         this->window.SetTitle(title);
     }
 
     float FontSize() { return this->fontSize; }
-};
 
+    Box GetScreenBounds() { return this->screenBounds; }
+};
+ 
 void PiXELGraph::Init(int width, int height, int fontSize = 2)
 {
     this->fontSize = fontSize < 2 ? 2 : fontSize;
 
     this->window = ConsoleWindow(width, height, fontSize, fontSize, windowTitle);
     this->screen = Screen(width, height); // use the ConsoleWindow Buffer TODO
+
+    this->screenBounds = Box(0, 0, this->screen.GetWidth(), this->screen.GetHeight());
+
     this->timer = Timer(this->timeScale);
     this->input = InputSystem(); // use the Console InputHandle TO DO
 

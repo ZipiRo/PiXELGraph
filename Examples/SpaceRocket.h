@@ -5,18 +5,31 @@ class Game : public PiXELGraph
 public:
     Game()
     {
-        this->backgroundColor = Color256::LightYellow; 
+        this->backgroundColor = Color256::White; 
         this->windowTitle = L"SpaceRocket v1.0";
         this->timeScale = 1;
-        this->FPS = 60;
+        this->FPS = 90;
 
-        Init(640 / 3, 480 / 3, 3);
+        Init(640 / 6, 480 / 6, 6);
     }
 
+    struct Particle
+    {
+        Vector2 position;
+        Vector2 direction;
+        float magnitude;
+        Color color;
+        float alive;
+    };
+
+    Box screenBounds;
     Font font;
     Text T_FPS;
+    Text T_ParticleCount;
     
     Shape *player;
+
+    std::list<Particle> particles;
 
     void OnStart() override
     {
@@ -25,9 +38,15 @@ public:
         T_FPS.SetFont(font);
         T_FPS.SetFontSize(4.5);
 
+        T_ParticleCount = Text(1, 480 / 3 - 7);
+        T_ParticleCount.SetFont(font);
+        T_ParticleCount.SetFontSize(4.5);
+
         player = new Rectangle(30, 40, 10, 6);
         player->SetFillColor(Color256::Red);
         player->SetPivot({0.5, 0.5});
+
+        screenBounds = GetScreenBounds();
     }
 
     bool boost = false;
@@ -41,9 +60,10 @@ public:
     Vector2 screenMousePosition;
     Vector2 direction;
 
+
     float angle;
-    float turnSpeed = 100;
-    float speed = 100;
+    float rocketTurnSpeed = 100;
+    float rocketSpeed = 100;
 
     Color colorCounter = 0;
 
@@ -60,17 +80,28 @@ public:
             frameTimer = 0;
         }
 
+        T_ParticleCount.SetString("PARTICLES: " + std::to_string(particles.size()));
+
         mousePosition = Vector2(input.GetMousePositionX(), input.GetMousePositionY());
         screenMousePosition = mousePosition / FontSize();
 
         if(input.isKeyDown(Keyboard::Key_W))
-            player->GetTransform().Move(player->GetTransform().right * speed * deltaTime);
+            player->GetTransform().Move(player->GetTransform().right * rocketSpeed * deltaTime);
         if(input.isKeyDown(Keyboard::Key_S))
-            player->GetTransform().Move(-player->GetTransform().right * speed * deltaTime);
+            player->GetTransform().Move(-player->GetTransform().right * rocketSpeed * deltaTime);
         if(input.isKeyDown(Keyboard::Key_A))
-            player->GetTransform().Move(player->GetTransform().up * speed * deltaTime);
+            player->GetTransform().Move(player->GetTransform().up * rocketSpeed * deltaTime);
         if(input.isKeyDown(Keyboard::Key_D))
-            player->GetTransform().Move(-player->GetTransform().up * speed * deltaTime);
+            player->GetTransform().Move(-player->GetTransform().up * rocketSpeed * deltaTime);
+
+        if(input.isMouseButtonDown(Mouse::Right))
+        {
+            Particle new_Particle{player->GetTransform().position, 
+                                player->GetTransform().right, 50 * deltaTime, 
+                                Color256(colorCounter++ % 256)};
+            
+            particles.push_front(new_Particle);
+        }
 
         if(input.isKeyDown(Keyboard::Key_Q))
         {
@@ -86,6 +117,27 @@ public:
         angle = atan2(direction.y, direction.x);
 
         player->GetTransform().RotateTo(angle);
+        
+        for(Particle &particle : particles)
+        {
+            particle.alive += deltaTime;
+
+            Vector2 direction = particle.direction;
+            float magnitude = particle.magnitude;
+
+            particle.position += direction * magnitude; 
+            
+            if(particle.position.x > screenBounds.right || particle.position.x < screenBounds.left ||
+                particle.position.y > screenBounds.bottom || particle.position.y < screenBounds.top)
+            {
+                
+            }
+
+            if(particle.alive > 10.0)
+            {
+                particles.pop_back();
+            }
+        }
 
         if(slowmo)
         {
@@ -102,14 +154,14 @@ public:
 
         if(boost)
         {
-            speed = 200;
-            turnSpeed = 150;
+            rocketSpeed = 200;
+            rocketTurnSpeed = 150;
             boostTimer += deltaTime;
 
             if(boostTimer >= 1)
             {
-                speed = 100;
-                turnSpeed = 100;
+                rocketSpeed = 100;
+                rocketTurnSpeed = 100;
                 boost = false;
                 boostTimer = 0;
             }
@@ -120,7 +172,11 @@ public:
     {
         player->Draw(screen);
         T_FPS.Draw(screen);
-        
+        T_ParticleCount.Draw(screen);
+
+        for(Particle &particle : particles)
+            screen.PlotPixel(particle.position.x, particle.position.y, particle.color);
+        DrawLines(screen, screenBounds.vertices, Color256::Black);
         screen.PlotPixel(screenMousePosition.x, screenMousePosition.y, Color256::Black);
     }
 
