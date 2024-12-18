@@ -10,7 +10,7 @@ public:
         this->timeScale = 1;
         this->FPS = 90;
 
-        Init(640 / 6, 480 / 6, 6);
+        Init(1240 / 3, 720 / 3, 3);
     }
 
     struct Particle
@@ -29,24 +29,30 @@ public:
     
     Shape *player;
 
+    Elipse elipse;
+
     std::list<Particle> particles;
 
     void OnStart() override
     {
+        screenBounds = GetScreenBounds();
+
+        elipse = Elipse(0, 0, 3, 3);
+        elipse.SetPivot({0.5, 0.5});
+
         font = Font("Resources/basic.f2p");
         T_FPS = Text(1, 1);
         T_FPS.SetFont(font);
         T_FPS.SetFontSize(4.5);
 
-        T_ParticleCount = Text(1, 480 / 3 - 7);
+        T_ParticleCount = Text(1, screenBounds.bottom - 5);
         T_ParticleCount.SetFont(font);
         T_ParticleCount.SetFontSize(4.5);
 
-        player = new Rectangle(30, 40, 10, 6);
+        player = new Elipse(30, 40, 10, 6, 3);
         player->SetFillColor(Color256::Red);
         player->SetPivot({0.5, 0.5});
 
-        screenBounds = GetScreenBounds();
     }
 
     bool boost = false;
@@ -59,7 +65,6 @@ public:
     Vector2 mousePosition;
     Vector2 screenMousePosition;
     Vector2 direction;
-
 
     float angle;
     float rocketTurnSpeed = 100;
@@ -80,7 +85,7 @@ public:
             frameTimer = 0;
         }
 
-        T_ParticleCount.SetString("PARTICLES: " + std::to_string(particles.size()));
+        T_ParticleCount.SetString(std::to_string(particles.size()));
 
         mousePosition = Vector2(input.GetMousePositionX(), input.GetMousePositionY());
         screenMousePosition = mousePosition / FontSize();
@@ -96,11 +101,11 @@ public:
 
         if(input.isMouseButtonDown(Mouse::Right))
         {
-            Particle new_Particle{player->GetTransform().position, 
+            Particle new_Particle {player->GetTransform().position + player->GetTransform().right * 10, 
                                 player->GetTransform().right, 50 * deltaTime, 
                                 Color256(colorCounter++ % 256)};
             
-            particles.push_front(new_Particle);
+            particles.push_back(new_Particle);
         }
 
         if(input.isKeyDown(Keyboard::Key_Q))
@@ -126,16 +131,19 @@ public:
             float magnitude = particle.magnitude;
 
             particle.position += direction * magnitude; 
-            
-            if(particle.position.x > screenBounds.right || particle.position.x < screenBounds.left ||
-                particle.position.y > screenBounds.bottom || particle.position.y < screenBounds.top)
-            {
-                
-            }
+        }
 
-            if(particle.alive > 10.0)
+        for(auto particle_it = particles.begin(); particle_it != particles.end(); ++particle_it)
+        {
+            Particle particle = *particle_it;
+
+            if(particle.position.x > screenBounds.right || 
+                particle.position.x < screenBounds.left ||
+                particle.position.y > screenBounds.bottom || 
+                particle.position.y < screenBounds.top ||
+                particle.alive > 5.0)
             {
-                particles.pop_back();
+                particles.erase(particle_it);
             }
         }
 
@@ -174,9 +182,14 @@ public:
         T_FPS.Draw(screen);
         T_ParticleCount.Draw(screen);
 
-        for(Particle &particle : particles)
-            screen.PlotPixel(particle.position.x, particle.position.y, particle.color);
-        DrawLines(screen, screenBounds.vertices, Color256::Black);
+        for(const Particle &particle : particles)
+        {
+            // screen.PlotPixel(particle.position.x, particle.position.y, particle.color);
+            elipse.SetFillColor(particle.color);
+            elipse.GetTransform().MoveTo(particle.position);
+            elipse.Draw(screen);
+        }
+
         screen.PlotPixel(screenMousePosition.x, screenMousePosition.y, Color256::Black);
     }
 

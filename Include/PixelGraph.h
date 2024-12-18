@@ -100,7 +100,7 @@ void PiXELGraph::Init(int width, int height, int fontSize = 2)
     this->window = ConsoleWindow(width, height, fontSize, fontSize, windowTitle);
     this->screen = Screen(width, height); // use the ConsoleWindow Buffer TODO
 
-    this->screenBounds = Box(0, 0, this->screen.GetWidth(), this->screen.GetHeight());
+    this->screenBounds = Box(0, 0, this->screen.GetWidth() - 1, this->screen.GetHeight() - 1);
 
     this->timer = Timer(this->timeScale);
     this->input = InputSystem(); // use the Console InputHandle TO DO
