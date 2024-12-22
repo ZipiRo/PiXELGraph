@@ -8,7 +8,7 @@ public:
         this->backgroundColor = Color256::White; 
         this->windowTitle = L"SpaceRocket v1.0";
         this->timeScale = 1;
-        this->FPS = 90;
+        this->FPS = 9999;
 
         Init(1240 / 3, 720 / 3, 3);
     }
@@ -37,7 +37,7 @@ public:
     {
         screenBounds = GetScreenBounds();
 
-        elipse = Elipse(0, 0, 3, 3);
+        elipse = Elipse(0, 0, 5, 3, 3);
         elipse.SetPivot({0.5, 0.5});
 
         font = Font("Resources/basic.f2p");
@@ -102,7 +102,7 @@ public:
         if(input.isMouseButtonDown(Mouse::Right))
         {
             Particle new_Particle {player->GetTransform().position + player->GetTransform().right * 10, 
-                                player->GetTransform().right, 50 * deltaTime, 
+                                player->GetTransform().right, 50, 
                                 Color256(colorCounter++ % 256)};
             
             particles.push_back(new_Particle);
@@ -130,7 +130,7 @@ public:
             Vector2 direction = particle.direction;
             float magnitude = particle.magnitude;
 
-            particle.position += direction * magnitude; 
+            particle.position += direction * magnitude * deltaTime; 
         }
 
         for(auto particle_it = particles.begin(); particle_it != particles.end(); ++particle_it)
@@ -185,7 +185,9 @@ public:
         for(const Particle &particle : particles)
         {
             // screen.PlotPixel(particle.position.x, particle.position.y, particle.color);
+            elipse.GetTransform().RotateTo(atan2(particle.direction.y, particle.direction.x));
             elipse.SetFillColor(particle.color);
+            elipse.SetOutlineColor(particle.color);
             elipse.GetTransform().MoveTo(particle.position);
             elipse.Draw(screen);
         }
