@@ -8,7 +8,7 @@ public:
         this->backgroundColor = Color256::White; 
         this->windowTitle = L"SpaceRocket v1.0";
         this->timeScale = 1;
-        this->FPS = 9999;
+        this->FPS = 60;
 
         Init(1240 / 3, 720 / 3, 3);
     }

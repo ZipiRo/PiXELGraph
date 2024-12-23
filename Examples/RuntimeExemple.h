@@ -5,10 +5,12 @@ class Game : public PiXELGraph
 public:
     Game()
     {
+        this->backgroundColor = Color256::White; 
+        this->windowTitle = L"SpaceRocket v1.0";
+        this->timeScale = 1;
         this->FPS = 60;
-        this->timeScale = 1.0;
 
-        Init(300, 200);
+        Init(1240 / 3, 720 / 3, 3);
     }
 
 private:
