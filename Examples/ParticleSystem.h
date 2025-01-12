@@ -23,18 +23,18 @@ public:
 class ParticleSystem
 {
 private:
+    std::list<Particle> particles;
     Vector2 position;
     
     int particleCount;
     float aliveTime;
 
 public:    
-    std::list<Particle> particles;
 
     ParticleSystem () {}
-    ParticleSystem (Vector2 position, int count, float aliveTime)
+    ParticleSystem (int count, float aliveTime)
     {
-        this->position = position;
+        this->position = ZERO;
         this->particleCount = count;
         this->aliveTime = aliveTime;
     }
@@ -54,22 +54,24 @@ public:
 
     void Update(float deltaTime, Box screenBounds)
     {  
-        // for(auto particle_it = particles.begin(); particle_it != particles.end(); ++particle_it)
-        // {
-        //     Particle particle = *particle_it;
+        for (auto particle_it = particles.begin(); particle_it != particles.end();)
+        {
+            Particle& particle = *particle_it;
 
-        //     if
-        //     (
-        //         particle.alivetimer > 5.0 ||
-        //         particle.position.x > screenBounds.right || 
-        //         particle.position.x < screenBounds.left ||
-        //         particle.position.y > screenBounds.bottom || 
-        //         particle.position.y < screenBounds.top
-        //     )
-        //     {
-        //         particles.remove(*particle_it);
-        //     }
-        // }
+            if (particle.alivetimer > 5.0 ||
+                particle.position.x > screenBounds.right || 
+                particle.position.x < screenBounds.left ||
+                particle.position.y > screenBounds.bottom || 
+                particle.position.y < screenBounds.top)
+            {
+                particle_it = particles.erase(particle_it);
+            }
+            else
+            {
+                ++particle_it;
+            }
+        }
+
 
         for(Particle &particle : this->particles)
         {
@@ -82,6 +84,14 @@ public:
 
             particle.alivetimer += deltaTime;
         }      
+    }
+
+    void Draw(Screen &screen)
+    {
+        for(const Particle &particle : particles)
+        {
+            screen.PlotPixel(particle.position.x, particle.position.y, particle.color);
+        }
     }
 
     void Reset()
@@ -105,23 +115,28 @@ public:
         this->timeScale = 1;
         this->FPS = 120;
 
-        Init(1920 / 5, 1080 / 5, 5);
+        Init(1920 / 3, 1080 / 3, 3);
     }
 
 private:
     Box screenBounds;
 
-    ParticleSystem s1;
+    ParticleSystem particleSystem;
     
     Elipse elipse;
+    Rectangle cursor;
 
     void OnStart() override
     {
-        elipse = Elipse(0, 0, 3, 3);
+        elipse = Elipse(0, 0, 3, 3, 2);
         elipse.SetPivot({0.5, 0.5});
 
+        cursor = Rectangle(0, 0, 1, 1);
+        cursor.SetFillColor(Color256::White);
+        cursor.SetOutlineColor(Color256::White);
+
         screenBounds = GetScreenBounds();
-        s1 = ParticleSystem(ZERO, 20, 5);
+        particleSystem = ParticleSystem(100, 5);
     }
 
     float frameTimer = 1;
@@ -141,30 +156,24 @@ private:
             frameTimer = 0;
         }
 
-
         if(input.isKeyDown(Key_Escape)) Quit();
-        if(input.isKeyDown(Key_R)) s1.Reset();
+        if(input.isKeyDown(Key_R)) particleSystem.Reset();
 
         if(input.isMouseButtonDown(Mouse::Right))
         {
-            s1.SetPosition(screenMousePosition);
-            s1.Radial(10);
+            particleSystem.SetPosition(screenMousePosition);
+            particleSystem.Radial(60);
         }
 
-        s1.Update(deltaTime, screenBounds);
+        cursor.GetTransform().MoveTo(screenMousePosition);
+
+        particleSystem.Update(deltaTime, screenBounds);
     }
 
     void OnDraw(Screen &screen) override
     {
-        for(const Particle &particle : s1.particles)
-        {
-            screen.PlotPixel(particle.position.x, particle.position.y, particle.color);
-            // elipse.SetFillColor(particle.color);
-            // elipse.SetOutlineColor(particle.color);
-            // elipse.GetTransform().MoveTo(particle.position);
-            // elipse.GetTransform().RotateTo(atan2(particle.direction.y, particle.direction.x));
-            // elipse.Draw(screen);
-        }       
+        particleSystem.Draw(screen);   
+        cursor.Draw(screen);
     }
 
     void OnQuit() override
