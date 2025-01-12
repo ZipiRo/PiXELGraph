@@ -97,6 +97,9 @@ void PiXELGraph::Init(int width, int height, int fontSize = 2)
 {
     this->fontSize = fontSize < 2 ? 2 : fontSize;
 
+    width /= fontSize;
+    height /= fontSize;
+
     this->window = ConsoleWindow(width, height, fontSize, fontSize, windowTitle);
     this->screen = Screen(width, height); // use the ConsoleWindow Buffer TODO
 

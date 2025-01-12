@@ -58,7 +58,7 @@ public:
         {
             Particle& particle = *particle_it;
 
-            if (particle.alivetimer > 5.0 ||
+            if (particle.alivetimer > aliveTime ||
                 particle.position.x > screenBounds.right || 
                 particle.position.x < screenBounds.left ||
                 particle.position.y > screenBounds.bottom || 

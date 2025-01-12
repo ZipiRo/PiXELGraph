@@ -1,5 +1,111 @@
 #include "../Include/PixelGraph.h"
 
+class Particle
+{
+public:
+    Vector2 position;
+    Vector2 direction;
+    float magnitude;
+    Color256 color;
+    float alivetimer;
+    
+    Particle () {}
+    Particle (Vector2 position, Vector2 direction, float magnitude, Color256 color)
+    {
+        this->position = position;
+        this->direction = direction;
+        this->magnitude = magnitude;
+        this->color = color;
+        this->alivetimer = 0;
+    }
+};
+
+class ParticleSystem
+{
+private:
+    std::list<Particle> particles;
+    Vector2 position;
+    
+    int particleCount;
+    float aliveTime;
+
+public:    
+
+    ParticleSystem () {}
+    ParticleSystem (int count, float aliveTime)
+    {
+        this->position = ZERO;
+        this->particleCount = count;
+        this->aliveTime = aliveTime;
+    }
+
+    void Radial(float magnitude)
+    {
+        float angle_it = (2 * PI) / particleCount;
+
+        for(float angle = 0; angle < 2 * PI; angle += angle_it)
+        {
+            Vector2 direction(cos(angle), sin(angle));
+            Particle new_Particle(position, direction, magnitude, Color256(int(angle)));
+
+            this->particles.emplace_back(new_Particle);
+        }
+    }
+
+    void Update(float deltaTime, Box screenBounds)
+    {  
+        for (auto particle_it = particles.begin(); particle_it != particles.end();)
+        {
+            Particle& particle = *particle_it;
+
+            if (particle.alivetimer > aliveTime ||
+                particle.position.x > screenBounds.right || 
+                particle.position.x < screenBounds.left ||
+                particle.position.y > screenBounds.bottom || 
+                particle.position.y < screenBounds.top)
+            {
+                particle_it = particles.erase(particle_it);
+            }
+            else
+            {
+                ++particle_it;
+            }
+        }
+
+
+        for(Particle &particle : this->particles)
+        {
+            Vector2 direction = particle.direction;
+            float magnitude = particle.magnitude;
+
+            particle.position += direction * magnitude * deltaTime; 
+            
+            particle.color = Color256(int(particle.alivetimer * 100) % 256);
+
+            particle.alivetimer += deltaTime;
+        }      
+    }
+
+    void Draw(Screen &screen)
+    {
+        for(const Particle &particle : particles)
+        {
+            screen.PlotPixel(particle.position.x, particle.position.y, particle.color);
+        }
+    }
+
+    void Reset()
+    {
+        this->particles.clear();
+    }
+
+    void SetPosition(Vector2 position)
+    {
+        this->position = position;
+    }
+};
+
+
 class Game : public PiXELGraph
 {
 public:
@@ -10,10 +116,10 @@ public:
         this->timeScale = 1;
         this->FPS = 60;
 
-        Init(1240 / 3, 720 / 3, 3);
+        Init(1240, 720, 2);
     }
 
-    struct Particle
+    struct Projectile
     {
         Vector2 position;
         Vector2 direction;
@@ -31,7 +137,10 @@ public:
 
     Elipse elipse;
 
-    std::list<Particle> particles;
+    std::list<Projectile> bullets;
+    int aliveTime = 2;
+
+    ParticleSystem particleSystem;
 
     void OnStart() override
     {
@@ -39,6 +148,8 @@ public:
 
         elipse = Elipse(0, 0, 5, 3, 3);
         elipse.SetPivot({0.5, 0.5});
+
+        particleSystem = ParticleSystem(50, 2);
 
         font = Font("Resources/basic.f2p");
         T_FPS = Text(1, 1);
@@ -85,7 +196,7 @@ public:
             frameTimer = 0;
         }
 
-        T_ParticleCount.SetString(std::to_string(particles.size()));
+        T_ParticleCount.SetString(std::to_string(bullets.size()));
 
         mousePosition = Vector2(input.GetMousePositionX(), input.GetMousePositionY());
         screenMousePosition = mousePosition / FontSize();
@@ -101,11 +212,11 @@ public:
 
         if(input.isMouseButtonDown(Mouse::Right))
         {
-            Particle new_Particle {player->GetTransform().position + player->GetTransform().right * 10, 
+            Projectile new_Particle {player->GetTransform().position + player->GetTransform().right * 10, 
                                 player->GetTransform().right, 50, 
                                 Color256(colorCounter++ % 256)};
             
-            particles.push_back(new_Particle);
+            bullets.push_back(new_Particle);
         }
 
         if(input.isKeyDown(Keyboard::Key_Q))
@@ -123,7 +234,7 @@ public:
 
         player->GetTransform().RotateTo(angle);
         
-        for(Particle &particle : particles)
+        for(Projectile &particle : bullets)
         {
             particle.alive += deltaTime;
 
@@ -133,19 +244,28 @@ public:
             particle.position += direction * magnitude * deltaTime; 
         }
 
-        for(auto particle_it = particles.begin(); particle_it != particles.end(); ++particle_it)
+        for(auto bullet_it = bullets.begin(); bullet_it != bullets.end();)
         {
-            Particle particle = *particle_it;
+            Projectile& particle = *bullet_it;
 
-            if(particle.position.x > screenBounds.right || 
+            if (particle.position.x > screenBounds.right ||
                 particle.position.x < screenBounds.left ||
                 particle.position.y > screenBounds.bottom || 
                 particle.position.y < screenBounds.top ||
-                particle.alive > 5.0)
+                particle.alive > aliveTime)
             {
-                particles.erase(particle_it);
+                particleSystem.SetPosition(particle.position);
+                particleSystem.Radial(60);
+
+                bullet_it = bullets.erase(bullet_it);
+            }
+            else
+            {
+                ++bullet_it;
             }
         }
+
+        particleSystem.Update(deltaTime, screenBounds);
 
         if(slowmo)
         {
@@ -182,7 +302,7 @@ public:
         T_FPS.Draw(screen);
         T_ParticleCount.Draw(screen);
 
-        for(const Particle &particle : particles)
+        for(const Projectile &particle : bullets)
         {
             // screen.PlotPixel(particle.position.x, particle.position.y, particle.color);
             elipse.GetTransform().RotateTo(atan2(particle.direction.y, particle.direction.x));
@@ -191,6 +311,8 @@ public:
             elipse.GetTransform().MoveTo(particle.position);
             elipse.Draw(screen);
         }
+
+        particleSystem.Draw(screen);
 
         screen.PlotPixel(screenMousePosition.x, screenMousePosition.y, Color256::Black);
     }
