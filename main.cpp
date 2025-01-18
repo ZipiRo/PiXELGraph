@@ -1,4 +1,4 @@
-#include "Examples/SpaceRocket.h"
+#include "Examples/ParticleSystem.h"
 
 int main()
 {

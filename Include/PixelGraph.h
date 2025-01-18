@@ -29,6 +29,7 @@ const int MAX_HEIGHT = 1000;
 #include "Timer.h"
 
 #include "Vector2.h"
+#include "Math.h"
 #include "Box.h"
 #include "Utils.h"
 

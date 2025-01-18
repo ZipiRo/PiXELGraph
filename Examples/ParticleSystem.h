@@ -52,6 +52,27 @@ public:
         }
     }
 
+    void RandomDirection()
+    {
+        srand(time(NULL));
+
+        for(int i = 0; i < particleCount; i++)
+        {
+            int neg = rand() % 2;
+            float x = float(1 + rand() % (100 - 1 + 1)) / 100.0f * (!neg ? -1 : 1);
+            neg = rand() % 2;
+            float y = float(1 + rand() % (100 - 1 + 1)) / 100.0f * (!neg ? -1 : 1);
+
+            float magnitude = 1 + rand() % (100 - 1 + 1);
+
+            Vector2 direction = Vector2(x, y);
+            direction = Normalize(direction);
+            Particle new_Particle(position, direction, magnitude, Color256(rand() % 256));
+
+            this->particles.emplace_back(new_Particle);
+        }
+    }
+
     void Update(float deltaTime, Box screenBounds)
     {  
         for (auto particle_it = particles.begin(); particle_it != particles.end();)
@@ -115,7 +136,7 @@ public:
         this->timeScale = 1;
         this->FPS = 120;
 
-        Init(1920 / 3, 1080 / 3, 3);
+        Init(1920 / 2, 1080 / 2, 3);
     }
 
 private:
@@ -131,12 +152,12 @@ private:
         elipse = Elipse(0, 0, 3, 3, 2);
         elipse.SetPivot({0.5, 0.5});
 
-        cursor = Rectangle(0, 0, 1, 1);
+        cursor = Rectangle(0, 0, .5, .5);
         cursor.SetFillColor(Color256::White);
         cursor.SetOutlineColor(Color256::White);
 
         screenBounds = GetScreenBounds();
-        particleSystem = ParticleSystem(100, 5);
+        particleSystem = ParticleSystem(123, 5);
     }
 
     float frameTimer = 1;
@@ -162,7 +183,7 @@ private:
         if(input.isMouseButtonDown(Mouse::Right))
         {
             particleSystem.SetPosition(screenMousePosition);
-            particleSystem.Radial(60);
+            particleSystem.RandomDirection();
         }
 
         cursor.GetTransform().MoveTo(screenMousePosition);
