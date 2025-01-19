@@ -33,6 +33,20 @@ const int MAX_HEIGHT = 1000;
 #include "Box.h"
 #include "Utils.h"
 
+// Define the colors for the screen 
+// COLOR_16 mode (true) 
+// COLOR_256 mode (false)
+// COLOR_RGB mode (false - false)
+// ------------------
+#if true
+#define COLOR_16
+#elif false
+#define COLOR_256
+#else
+#define COLOR_RGB
+#endif
+// ------------------
+
 #include "Font.h"
 #include "Color.h"
 #include "Screen.h"
@@ -48,7 +62,7 @@ class PiXELGraph
 protected:
     InputSystem input;
 
-    Color backgroundColor = Color256::White;
+    Color backgroundColor = Color::White;
     std::wstring windowTitle = L"Demo";
     float timeScale = 1.0;
     float FPS = 60;
@@ -71,7 +85,7 @@ public:
     void Run();
     void Quit();
 
-    void SetScreenBackgroundColor(Color256 color)
+    void SetScreenBackgroundColor(Color color)
     {
         this->backgroundColor = color;
     }
@@ -98,11 +112,8 @@ void PiXELGraph::Init(int width, int height, int fontSize = 2)
 {
     this->fontSize = fontSize < 2 ? 2 : fontSize;
 
-    width /= fontSize;
-    height /= fontSize;
-
-    this->window = ConsoleWindow(width, height, fontSize, fontSize, windowTitle);
-    this->screen = Screen(width, height); // use the ConsoleWindow Buffer TODO
+    this->window = ConsoleWindow(width, height, this->fontSize, this->fontSize, windowTitle);
+    this->screen = Screen(width, height);
 
     this->screenBounds = Box(0, 0, this->screen.GetWidth() - 1, this->screen.GetHeight() - 1);
 

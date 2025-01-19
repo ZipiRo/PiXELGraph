@@ -6,11 +6,11 @@ public:
     Vector2 position;
     Vector2 direction;
     float magnitude;
-    Color256 color;
+    Color color;
     float alivetimer;
     
     Particle () {}
-    Particle (Vector2 position, Vector2 direction, float magnitude, Color256 color)
+    Particle (Vector2 position, Vector2 direction, float magnitude, Color color)
     {
         this->position = position;
         this->direction = direction;
@@ -46,7 +46,7 @@ public:
         for(float angle = 0; angle < 2 * PI; angle += angle_it)
         {
             Vector2 direction(cos(angle), sin(angle));
-            Particle new_Particle(position, direction, magnitude, Color256(int(angle)));
+            Particle new_Particle(position, direction, magnitude, Color::Blue);
 
             this->particles.emplace_back(new_Particle);
         }
@@ -67,7 +67,7 @@ public:
 
             Vector2 direction = Vector2(x, y);
             direction = Normalize(direction);
-            Particle new_Particle(position, direction, magnitude, Color256(rand() % 256));
+            Particle new_Particle(position, direction, magnitude, Color::Blue);
 
             this->particles.emplace_back(new_Particle);
         }
@@ -101,7 +101,7 @@ public:
 
             particle.position += direction * magnitude * deltaTime; 
             
-            particle.color = Color256(int(particle.alivetimer * 100) % 256);
+            // particle.color = COLOR(int(particle.alivetimer * 100) % 256);
 
             particle.alivetimer += deltaTime;
         }      
@@ -131,12 +131,12 @@ class Game : public PiXELGraph
 public:
     Game()
     {
-        this->backgroundColor = Color256::Black; 
+        this->backgroundColor = Color::Black; 
         this->windowTitle = L"ParticleSystem v1.0";
         this->timeScale = 1;
         this->FPS = 120;
 
-        Init(1920 / 2, 1080 / 2, 3);
+        Init(1240 / 3, 720 / 3, 3);
     }
 
 private:
@@ -153,8 +153,8 @@ private:
         elipse.SetPivot({0.5, 0.5});
 
         cursor = Rectangle(0, 0, .5, .5);
-        cursor.SetFillColor(Color256::White);
-        cursor.SetOutlineColor(Color256::White);
+        cursor.SetFillColor(Color::White);
+        cursor.SetOutlineColor(Color::White);
 
         screenBounds = GetScreenBounds();
         particleSystem = ParticleSystem(123, 5);

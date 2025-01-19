@@ -83,7 +83,7 @@ Text::Text(float x, float y)
     this->transform.scale = Vector2(5, 5);
     this->fontWeight = 1;
     
-    this->fontColor = Black;
+    this->fontColor = Color::Black;
 }
 
 void Text::SetString(const std::string &string)
@@ -104,7 +104,7 @@ void Text::Draw(Screen &screen)
 
     if(transformedVertices.empty()) return;
 
-    if(fontColor == Transparent) return;
+    if(fontColor == Color::Transparent) return;
 
     for(int i = 0; i < indices.size() - 1; i += 2)
     {   

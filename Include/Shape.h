@@ -129,10 +129,10 @@ void Shape::Draw(Screen &screen)
         transform.update = false;
     }
 
-    if(fillColor != Transparent)
+    if(fillColor != Color::Transparent)
         FillShape(screen, boundingBox, transformedVertices, fillColor);
 
-    if(outlineColor != Transparent) 
+    if(outlineColor != Color::Transparent) 
         DrawLines(screen, transformedVertices, outlineColor, outlineThickness);
 }
 

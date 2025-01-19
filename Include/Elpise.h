@@ -46,8 +46,8 @@ Elipse::Elipse(float x, float y, float radiusX, float radiusY, const int point_c
     this->radiusY = radiusY;
     this->outlineThickness = 1;
     this->point_count = point_count;
-    this->outlineColor = Color256::Black;
-    this->fillColor = Color256::Transparent;
+    this->outlineColor = Color::Black;
+    this->fillColor = Color::Transparent;
 
     this->vertices = CreateElipseVertices(this->radiusX, this->radiusY, point_count, 0, 0);
 
@@ -77,10 +77,10 @@ void Elipse::Draw(Screen &screen)
         transform.update = false;
     }
 
-    if(fillColor != Transparent)
+    if(fillColor != Color::Transparent)
         FillShape(screen, boundingBox, transformedVertices, fillColor);
 
-    if(outlineColor != Transparent) 
+    if(outlineColor != Color::Transparent) 
         DrawLines(screen, transformedVertices, outlineColor, outlineThickness);
 }
 

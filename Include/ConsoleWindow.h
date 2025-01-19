@@ -53,6 +53,13 @@ bool ConsoleWindow::ConstructConsole()
     if(ConsoleOutputHandle == ((winapi::HANDLE) (winapi::LONG_PTR)-1))
         return 0;
 
+    winapi::DWORD ConsoleMode = 0;
+    if(winapi::GetConsoleMode(ConsoleOutputHandle, &ConsoleMode))
+    {   
+        ConsoleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        winapi::SetConsoleMode(ConsoleOutputHandle, ConsoleMode);  
+    }
+
     this->WindowRect = {0, 0, 1, 1};
     SetConsoleWindowInfo(ConsoleOutputHandle, TRUE, &WindowRect);
 

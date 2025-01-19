@@ -6,11 +6,11 @@ public:
     Vector2 position;
     Vector2 direction;
     float magnitude;
-    Color256 color;
+    Color color;
     float alivetimer;
     
     Particle () {}
-    Particle (Vector2 position, Vector2 direction, float magnitude, Color256 color)
+    Particle (Vector2 position, Vector2 direction, float magnitude, Color color)
     {
         this->position = position;
         this->direction = direction;
@@ -46,7 +46,28 @@ public:
         for(float angle = 0; angle < 2 * PI; angle += angle_it)
         {
             Vector2 direction(cos(angle), sin(angle));
-            Particle new_Particle(position, direction, magnitude, Color256(int(angle)));
+            Particle new_Particle(position, direction, magnitude, Color::Blue);
+
+            this->particles.emplace_back(new_Particle);
+        }
+    }
+
+    void RandomDirection()
+    {
+        srand(time(NULL));
+
+        for(int i = 0; i < particleCount; i++)
+        {
+            int neg = rand() % 2;
+            float x = float(1 + rand() % (100 - 1 + 1)) / 100.0f * (!neg ? -1 : 1);
+            neg = rand() % 2;
+            float y = float(1 + rand() % (100 - 1 + 1)) / 100.0f * (!neg ? -1 : 1);
+
+            float magnitude = 1 + rand() % (100 - 1 + 1);
+
+            Vector2 direction = Vector2(x, y);
+            direction = Normalize(direction);
+            Particle new_Particle(position, direction, magnitude, Color::Blue);
 
             this->particles.emplace_back(new_Particle);
         }
@@ -80,7 +101,7 @@ public:
 
             particle.position += direction * magnitude * deltaTime; 
             
-            particle.color = Color256(int(particle.alivetimer * 100) % 256);
+            // particle.color = COLOR(int(particle.alivetimer * 100) % 256);
 
             particle.alivetimer += deltaTime;
         }      
@@ -88,9 +109,15 @@ public:
 
     void Draw(Screen &screen)
     {
+        Elipse elipse = Elipse(0, 0, 3, 3, 12);
         for(const Particle &particle : particles)
         {
             screen.PlotPixel(particle.position.x, particle.position.y, particle.color);
+            // elipse.GetTransform().RotateTo(atan2(particle.direction.y, particle.direction.x));
+            // elipse.GetTransform().MoveTo(particle.position);
+            // elipse.SetFillColor(particle.color);
+            // elipse.SetOutlineColor(particle.color);
+            // elipse.Draw(screen);
         }
     }
 
@@ -105,18 +132,17 @@ public:
     }
 };
 
-
 class Game : public PiXELGraph
 {
 public:
     Game()
     {
-        this->backgroundColor = Color256::White; 
+        this->backgroundColor = Color::White; 
         this->windowTitle = L"SpaceRocket v1.0";
         this->timeScale = 1;
-        this->FPS = 60;
+        this->FPS = 99999;
 
-        Init(1240, 720, 2);
+        Init(1240 / 2, 720 / 2 , 2);
     }
 
     struct Projectile
@@ -146,10 +172,10 @@ public:
     {
         screenBounds = GetScreenBounds();
 
-        elipse = Elipse(0, 0, 5, 3, 3);
+        elipse = Elipse(0, 0, 5, 3);
         elipse.SetPivot({0.5, 0.5});
 
-        particleSystem = ParticleSystem(50, 2);
+        particleSystem = ParticleSystem(50, 5);
 
         font = Font("Resources/basic.f2p");
         T_FPS = Text(1, 1);
@@ -161,7 +187,7 @@ public:
         T_ParticleCount.SetFontSize(4.5);
 
         player = new Elipse(30, 40, 10, 6, 3);
-        player->SetFillColor(Color256::Red);
+        player->SetFillColor(Color::Red);
         player->SetPivot({0.5, 0.5});
 
     }
@@ -181,7 +207,7 @@ public:
     float rocketTurnSpeed = 100;
     float rocketSpeed = 100;
 
-    Color colorCounter = 0;
+    int colorCounter = 0;
 
     void OnUpdate(float deltaTime) override
     {   
@@ -214,7 +240,7 @@ public:
         {
             Projectile new_Particle {player->GetTransform().position + player->GetTransform().right * 10, 
                                 player->GetTransform().right, 50, 
-                                Color256(colorCounter++ % 256)};
+                                Color::Red};
             
             bullets.push_back(new_Particle);
         }
@@ -222,7 +248,7 @@ public:
         if(input.isKeyDown(Keyboard::Key_Q))
         {
             SetTimeScale(0.5);
-            player->SetFillColor(Color256::LightBlue);
+            player->SetFillColor(Color::LightBlue);
             slowmo = true;
         }
 
@@ -248,14 +274,14 @@ public:
         {
             Projectile& particle = *bullet_it;
 
-            if (particle.position.x > screenBounds.right ||
-                particle.position.x < screenBounds.left ||
-                particle.position.y > screenBounds.bottom || 
-                particle.position.y < screenBounds.top ||
+            if (particle.position.x > screenBounds.right - 5 ||
+                particle.position.x < screenBounds.left + 5 ||
+                particle.position.y > screenBounds.bottom - 5|| 
+                particle.position.y < screenBounds.top + 5 ||
                 particle.alive > aliveTime)
             {
                 particleSystem.SetPosition(particle.position);
-                particleSystem.Radial(60);
+                particleSystem.RandomDirection();
 
                 bullet_it = bullets.erase(bullet_it);
             }
@@ -274,7 +300,7 @@ public:
             if(slowmoTimer >= 2)
             {
                 SetTimeScale(1);
-                player->SetFillColor(Color256::Red);
+                player->SetFillColor(Color::Red);
                 slowmo = false;
                 slowmoTimer = 0;
             }
@@ -314,7 +340,7 @@ public:
 
         particleSystem.Draw(screen);
 
-        screen.PlotPixel(screenMousePosition.x, screenMousePosition.y, Color256::Black);
+        screen.PlotPixel(screenMousePosition.x, screenMousePosition.y, Color::Black);
     }
 
     void OnQuit() override
