@@ -67,7 +67,7 @@ public:
 
             Vector2 direction = Vector2(x, y);
             direction = Normalize(direction);
-            Particle new_Particle(position, direction, magnitude, Color::Blue);
+            Particle new_Particle(position, direction, magnitude, Color::White);
 
             this->particles.emplace_back(new_Particle);
         }
@@ -180,7 +180,7 @@ private:
         if(input.isKeyDown(Key_Escape)) Quit();
         if(input.isKeyDown(Key_R)) particleSystem.Reset();
 
-        if(input.isMouseButtonDown(Mouse::Right))
+        if(input.isMouseButtonDown(Mouse::Left))
         {
             particleSystem.SetPosition(screenMousePosition);
             particleSystem.RandomDirection();

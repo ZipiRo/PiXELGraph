@@ -67,7 +67,7 @@ public:
     void Draw(Screen &screen);
     Box GetBoundingBox();
 
-    Transform &Transform();
+    Transform &GetTransform();
 
     void SetFont(const Font &font);
     void SetString(const std::string &string);
@@ -130,7 +130,7 @@ Box Text::GetBoundingBox()
     return this->boundingBox;
 }
 
-Transform &Text::Transform()
+Transform &Text::GetTransform()
 {
     if(transform.update)
         transformedVertices = UpdateVertices(transform, vertices);

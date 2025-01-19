@@ -35,7 +35,7 @@ const int MAX_HEIGHT = 1000;
 
 // Define the colors for the screen 
 // COLOR_16 mode (true) 
-// COLOR_256 mode (false)
+// COLOR_256 mode (true - false)
 // COLOR_RGB mode (false - false)
 // ------------------
 #if true

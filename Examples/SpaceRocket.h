@@ -142,7 +142,7 @@ public:
         this->timeScale = 1;
         this->FPS = 99999;
 
-        Init(1240 / 2, 720 / 2 , 2);
+        Init(1240 / 3, 720 / 3 , 3);
     }
 
     struct Projectile
@@ -175,7 +175,7 @@ public:
         elipse = Elipse(0, 0, 5, 3);
         elipse.SetPivot({0.5, 0.5});
 
-        particleSystem = ParticleSystem(50, 5);
+        particleSystem = ParticleSystem(50, .4);
 
         font = Font("Resources/basic.f2p");
         T_FPS = Text(1, 1);
@@ -236,7 +236,7 @@ public:
         if(input.isKeyDown(Keyboard::Key_D))
             player->GetTransform().Move(-player->GetTransform().up * rocketSpeed * deltaTime);
 
-        if(input.isMouseButtonDown(Mouse::Right))
+        if(input.isMouseButtonDown(Mouse::Left))
         {
             Projectile new_Particle {player->GetTransform().position + player->GetTransform().right * 10, 
                                 player->GetTransform().right, 50, 

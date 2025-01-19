@@ -10,7 +10,7 @@ public:
         this->timeScale = 1;
         this->FPS = 60;
 
-        Init(1240, 720, 3);
+        Init(1920 / 2, 1080 / 2, 2);
     }
 
 private:

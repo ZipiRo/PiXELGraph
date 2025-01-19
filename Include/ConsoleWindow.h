@@ -59,6 +59,12 @@ bool ConsoleWindow::ConstructConsole()
         ConsoleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         winapi::SetConsoleMode(ConsoleOutputHandle, ConsoleMode);  
     }
+    
+    if (winapi::GetConsoleMode(ConsoleInputHandle, &ConsoleMode)) 
+    {
+        ConsoleMode &= ~ENABLE_QUICK_EDIT_MODE;
+        winapi::SetConsoleMode(ConsoleInputHandle, ConsoleMode);
+    }
 
     this->WindowRect = {0, 0, 1, 1};
     SetConsoleWindowInfo(ConsoleOutputHandle, TRUE, &WindowRect);
