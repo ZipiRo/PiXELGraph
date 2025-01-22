@@ -16,8 +16,6 @@ namespace winapi
     #include <windows.h>
 }
 
-const float PI = 3.1415926535f;
-
 const int MAX_INT = 2147483647;
 const int MIN_INT = -2147483647;
 
@@ -32,20 +30,6 @@ const int MAX_HEIGHT = 1000;
 #include "Math.h"
 #include "Box.h"
 #include "Utils.h"
-
-// Define the colors for the screen 
-// COLOR_16 mode (true) 
-// COLOR_256 mode (true - false)
-// COLOR_RGB mode (false - false)
-// ------------------
-#if true
-#define COLOR_16
-#elif false
-#define COLOR_256
-#else
-#define COLOR_RGB
-#endif
-// ------------------
 
 #include "Font.h"
 #include "Color.h"
@@ -73,8 +57,8 @@ private:
     Screen screen;
     Timer timer;
 
-    int fontSize;
     Box screenBounds;
+    int fontSize;
     bool running;
 public:
     virtual void OnStart() = 0;
@@ -96,14 +80,12 @@ public:
         this->timer.TimeScale(timeScale);
     }
 
-    //todo dont refresh scereen func
-
     void SetWindowTitle(std::wstring title)
     {
         this->window.SetTitle(title);
     }
 
-    float FontSize() { return this->fontSize; }
+    float GetFontSize() { return this->fontSize; }
 
     Box GetScreenBounds() { return this->screenBounds; }
 };
@@ -118,7 +100,7 @@ void PiXELGraph::Init(int width, int height, int fontSize = 2)
     this->screenBounds = Box(0, 0, this->screen.GetWidth() - 1, this->screen.GetHeight() - 1);
 
     this->timer = Timer(this->timeScale);
-    this->input = InputSystem(); // use the Console InputHandle TO DO
+    this->input = InputSystem();
 
     this->running = true;
 }

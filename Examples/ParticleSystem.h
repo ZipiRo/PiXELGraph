@@ -101,7 +101,7 @@ public:
 
             particle.position += direction * magnitude * deltaTime; 
             
-            // particle.color = COLOR(int(particle.alivetimer * 100) % 256);
+            // particle.color = Color(int(particle.alivetimer * 100) % 256);
 
             particle.alivetimer += deltaTime;
         }      
@@ -168,7 +168,7 @@ private:
     void OnUpdate(float deltaTime) override
     {   
         mousePosition = Vector2(input.GetMousePositionX(), input.GetMousePositionY());
-        screenMousePosition = mousePosition / FontSize();
+        screenMousePosition = mousePosition / GetFontSize();
 
         frameTimer += deltaTime;
         if(frameTimer >= 1)

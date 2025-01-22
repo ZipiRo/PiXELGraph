@@ -37,8 +37,6 @@ Screen::Screen(int width, int height)
     this->screen = std::vector<Color>(this->width * this->height);
 }
 
-
-#ifdef COLOR_RGB
 void Screen::Display()
 {
     std::ostringstream buffer;
@@ -65,70 +63,6 @@ void Screen::Display()
 
     std::cout << buffer.str();
 }
-#endif
-
-#ifdef COLOR_16
-
-void Screen::Display()
-{
-    std::ostringstream buffer;
-    buffer << RESET_CURSOR_POSITION;
-
-    short int prevColor = -1; // Store the previous pixel's color
-    for (int i = 0; i < width * height; i++)
-    {
-        if(screen[i].code != prevColor)
-        {
-            buffer << "\e[" << screen[i].code << "m"; // Set color only when it changes
-            prevColor = screen[i].code;
-        }
-
-        buffer << ' '; // Draw pixel (space)
-
-        if ((i + 1) % width == 0)
-        {
-            buffer << "\e[0m\n"; // Reset formatting at end of row
-            prevColor = -1; // Force color reset for the next row
-        }
-    }
-    
-    buffer << "\e[0m"; // Reset formatting at end of screen
-    
-    std::cout << buffer.str();
-}
-
-#endif
-
-#ifdef COLOR_256
-
-void Screen::Display()
-{
-    std::ostringstream buffer;
-    buffer << RESET_CURSOR_POSITION;
-
-    short int prevColor = -1; // Store the previous pixel's color
-    for (int i = 0; i < width * height; i++)
-    {
-        if (screen[i].code != prevColor)
-        {
-            buffer << "\e[48;5;" << screen[i].code << "m"; // Set color only when it changes
-            prevColor = screen[i].code;
-        }
-        buffer << ' '; // Draw pixel (space)
-
-        if ((i + 1) % width == 0)
-        {
-            buffer << "\e[0m\n"; // Reset formatting at end of row
-            prevColor = -1; // Force color reset for the next row
-        }
-    }
-    
-    buffer << "\e[0m"; // Reset formatting at end of screen
-    
-    std::cout << buffer.str();
-}
-
-#endif
 
 void Screen::Clear(Color color)
 {
