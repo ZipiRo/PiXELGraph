@@ -46,3 +46,10 @@ void HeapSort(int arr[], int n)
         heapify(arr, i, 0);
     }
 }
+
+int IRandomRange(int min, int max)
+{
+    srand(time(NULL));
+
+    return min + rand() % (max - min + 1);
+}

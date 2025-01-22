@@ -6,7 +6,7 @@ public:
     Game()
     {
         this->backgroundColor = Color::White; 
-        this->windowTitle = L"SpaceRocket v1.0";
+        this->windowTitle = L"Demo";
         this->timeScale = 1;
         this->FPS = 60;
 
