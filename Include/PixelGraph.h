@@ -19,8 +19,8 @@ namespace winapi
 const int MAX_INT = 2147483647;
 const int MIN_INT = -2147483647;
 
-const int MAX_WIDTH = 1000;
-const int MAX_HEIGHT = 1000;
+const int MAX_WIDTH = 1920 / 2;
+const int MAX_HEIGHT = 1080 / 2;
 
 #include "ConsoleWindow.h"
 #include "InputSystem.h"
@@ -93,6 +93,9 @@ public:
 void PiXELGraph::Init(int width, int height, int fontSize = 2)
 {
     this->fontSize = fontSize < 2 ? 2 : fontSize;
+    
+    width = (width > MAX_WIDTH) ? MAX_WIDTH : width;
+    height = (height > MAX_HEIGHT) ? MAX_HEIGHT : height;
 
     this->window = ConsoleWindow(width, height, this->fontSize, this->fontSize, windowTitle);
     this->screen = Screen(width, height);

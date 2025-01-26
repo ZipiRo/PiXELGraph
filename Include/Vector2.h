@@ -14,23 +14,31 @@ public:
     Vector2 operator-() const;
     Vector2 operator+(const Vector2 vector) const;
     Vector2 operator-(const Vector2 vector) const;
-    
-    friend Vector2 operator*(float scalar, const Vector2& vector);
-    friend Vector2 operator/(float scalar, const Vector2& vector);
-
     Vector2 operator*(float scalar) const;
     Vector2 operator/(float scalar) const;
     Vector2 &operator+=(const Vector2& vector);
     Vector2 &operator-=(const Vector2& vector);
     Vector2 &operator*=(float scalar);
     Vector2 &operator/=(float scalar);
+
+    static float Length(const Vector2 &vector);
+    static Vector2 Normalize(Vector2 &vector);
+    static float Distance(const Vector2& a, const Vector2& b);
+    static float DotProduct(const Vector2& a, const Vector2& b);
+    static float CrossProduct(const Vector2& a, const Vector2& b);
+
+    const static Vector2 ZERO;
+    const static Vector2 UP;
+    const static Vector2 DOWN;
+    const static Vector2 RIGHT;
+    const static Vector2 LEFT;
 };
 
-const Vector2 ZERO(0, 0);
-const Vector2 UP(0, -1);
-const Vector2 DOWN(0, 1);
-const Vector2 RIGHT(1, 0);
-const Vector2 LEFT(-1, 0);
+const Vector2 Vector2::ZERO = Vector2(0, 0);
+const Vector2 Vector2::UP = Vector2(0, -1);
+const Vector2 Vector2::DOWN = Vector2(0, 1);
+const Vector2 Vector2::RIGHT = Vector2(1, 0);
+const Vector2 Vector2::LEFT = Vector2(-1, 0);
 
 Vector2::Vector2() 
 {
@@ -42,6 +50,38 @@ Vector2::Vector2(float x, float y)
 {
     this->x = x;
     this->y = y;
+}
+
+float Vector2::Length(const Vector2 &vector)
+{
+    return sqrt(vector.x * vector.x + vector.y * vector.y);
+}
+
+float Vector2::Distance(const Vector2& a, const Vector2& b)
+{
+    float dx = a.x - b.x;
+    float dy = a.y - b.y;
+
+    return sqrt(dx * dx + dy * dy);
+}
+
+Vector2 Vector2::Normalize(Vector2 &vector)
+{
+    float length = Vector2::Length(vector);
+    vector.x /= length;
+    vector.y /= length;
+    
+    return vector;
+}
+
+float Vector2::DotProduct(const Vector2& a, const Vector2& b) 
+{
+    return a.x * b.x + a.y * b.y;
+}
+
+float Vector2::CrossProduct(const Vector2& a, const Vector2& b)
+{
+    return a.x * b.y - a.y * b.x;
 }
 
 Vector2& Vector2::operator=(const Vector2 vector) 

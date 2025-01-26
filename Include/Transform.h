@@ -31,13 +31,13 @@ public:
 
 Transform::Transform()
 {
-    this->position = ZERO;
+    this->position = Vector2::ZERO;
     this->scale = Vector2(1.0f, 1.0f);
     this->angle = 0;
     this->sin0 = 0;
     this->cos0 = 1;
-    this->right = RIGHT;
-    this->up  = UP;
+    this->right = Vector2::RIGHT;
+    this->up  = Vector2::UP;
 }
 
 Transform::Transform(float x, float y, float scale_x, float scale_y, float angle)

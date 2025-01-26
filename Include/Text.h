@@ -17,7 +17,8 @@ void CreateTextVertices(const std::string &string, std::vector<Vector2> &vertice
             lineLetterCount++;
             continue;
         }
-        else if(string[i] == '\n')
+        
+        if(string[i] == '\n')
         {
             advance = 0;
             lineLetterCount = 0;

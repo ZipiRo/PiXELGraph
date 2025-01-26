@@ -32,8 +32,8 @@ Screen::Screen()
 
 Screen::Screen(int width, int height)
 {
-    this->width = (width > MAX_WIDTH) ? MAX_WIDTH : width - 1;
-    this->height = (height > MAX_HEIGHT) ? MAX_HEIGHT : height - 1;
+    this->width = width - 1;
+    this->height = height - 1;
     this->screen = std::vector<Color>(this->width * this->height);
 }
 

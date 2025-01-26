@@ -34,7 +34,7 @@ public:
     ParticleSystem () {}
     ParticleSystem (int count, float aliveTime)
     {
-        this->position = ZERO;
+        this->position = Vector2::ZERO;
         this->particleCount = count;
         this->aliveTime = aliveTime;
     }
@@ -66,7 +66,7 @@ public:
             float magnitude = 1 + rand() % (100 - 1 + 1);
 
             Vector2 direction = Vector2(x, y);
-            direction = Normalize(direction);
+            direction = Vector2::Normalize(direction);
             Particle new_Particle(position, direction, magnitude, Color::White);
 
             this->particles.emplace_back(new_Particle);
