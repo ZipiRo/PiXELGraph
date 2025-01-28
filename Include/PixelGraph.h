@@ -88,6 +88,13 @@ public:
     float GetFontSize() { return this->fontSize; }
 
     Box GetScreenBounds() { return this->screenBounds; }
+    int GetScreenWidth() { return this->screen.GetWidth(); }
+    int GetScreenHeight() { return this->screen.GetHeight(); }
+
+    Vector2 ScreenMousePosition(const Vector2 &mousePosition) 
+    {
+        return Vector2(mousePosition.x / fontSize, mousePosition.y / fontSize);
+    }
 };
  
 void PiXELGraph::Init(int width, int height, int fontSize = 2)
