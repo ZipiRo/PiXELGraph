@@ -27,6 +27,7 @@ setlocal
 set MAIN=%1
 set NAME=%2
 
-g++ %MAIN% -o Build/%NAME%
+g++ %MAIN% -o %NAME%
 start Build/%NAME%
 ```
+Command example `make main.cpp main`
