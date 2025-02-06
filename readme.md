@@ -2,6 +2,10 @@
 
 To compile and run the program, ensure you have the following prerequisites and follow the provided steps:
 
+##
+- Make sure you use console host as the default CMD, for this to work as it should. 
+- Or run the build as administrator. 
+
 ## Prerequisites
 1. Install the **MinGW compiler**.
 2. Set an **environment variable** for the MinGW binary directory to allow `g++` to be accessed globally.
