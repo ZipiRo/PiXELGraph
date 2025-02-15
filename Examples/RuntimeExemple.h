@@ -5,12 +5,10 @@ class Game : public PiXELGraph
 public:
     Game()
     {
-        this->backgroundColor = Color::White; 
+        this->backgroundColor = Color::Black; 
         this->windowTitle = L"Demo";
         this->timeScale = 1;
         this->FPS = 60;
-
-        Init(1920 / 2, 1080 / 2, 2);
     }
 
 private:

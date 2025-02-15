@@ -30,7 +30,6 @@ private:
     float aliveTime;
 
 public:    
-
     ParticleSystem () {}
     ParticleSystem (int count, float aliveTime)
     {
