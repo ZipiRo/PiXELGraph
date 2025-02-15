@@ -7,6 +7,8 @@ private:
     winapi::HANDLE ConsoleInputHandle;
     winapi::SMALL_RECT WindowRect;
 
+    winapi::HWND HWNDConsole;
+
     int ConsoleScreenWidth;
     int ConsoleScreenHeight;
     int ConsoleFontWidth;
@@ -20,6 +22,8 @@ public:
     ConsoleWindow() {}
     ConsoleWindow(int width, int height, int fontWidth, int fontHeight, const std::wstring &title)
     {
+        this->HWNDConsole = winapi::GetConsoleWindow();
+
         this->ConsoleOutputHandle = winapi::GetStdHandle((winapi::DWORD)-11);
         this->ConsoleInputHandle = winapi::GetStdHandle((winapi::DWORD)-10);
 
@@ -35,10 +39,14 @@ public:
     }
 
     winapi::HANDLE GetOutputHandle();
-    winapi::HANDLE GetInputHandle();
+    winapi::HANDLE *GetInputHandle();
+    winapi::HWND *GetHWNDConsole();
 
-    //focus
-
+    bool IsFocused()
+    {
+        return winapi::GetForegroundWindow() == this->HWNDConsole;
+    }
+    
     void SetTitle(const std::wstring &title)
     {
         this->ConsoleTitle = title;
@@ -96,7 +104,6 @@ bool ConsoleWindow::ConstructConsole()
     this->WindowRect = {0, 0, (short)(ConsoleScreenWidth - 1), (short)(ConsoleScreenHeight - 1)};
     if(winapi::SetConsoleWindowInfo(ConsoleOutputHandle, TRUE, &WindowRect)) return 0;
 
-
     return 1;
 }
 
@@ -105,7 +112,12 @@ winapi::HANDLE ConsoleWindow::GetOutputHandle()
     return this->ConsoleOutputHandle;
 }
 
-winapi::HANDLE ConsoleWindow::GetInputHandle()
+winapi::HANDLE *ConsoleWindow::GetInputHandle()
 {
-    return this->ConsoleInputHandle;
+    return &this->ConsoleInputHandle;
+}
+
+winapi::HWND *ConsoleWindow::GetHWNDConsole()
+{
+    return &this->HWNDConsole;
 }

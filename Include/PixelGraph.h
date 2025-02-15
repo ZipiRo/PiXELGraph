@@ -23,6 +23,7 @@ const int MAX_WIDTH = 1920 / 2;
 const int MAX_HEIGHT = 1080 / 2;
 
 #include "ConsoleWindow.h"
+#include "EventSystem.h"
 #include "InputSystem.h"
 #include "Timer.h"
 
@@ -45,19 +46,24 @@ class PiXELGraph
 {
 protected:
     InputSystem input;
+    Event event;
 
+
+    void Init(int width, int height, int fontSize);
+private:
     Color backgroundColor = Color::White;
     std::wstring windowTitle = L"Demo";
     float timeScale = 1.0;
     float FPS = 60;
 
-    void Init(int width, int height, int fontSize);
-private:
+    EventSystem eventSystem;
     ConsoleWindow window;
     Screen screen;
     Timer timer;
 
     Box screenBounds;
+    int screenWidth;
+    int screenHeight;
     int fontSize;
     bool running;
 public:
@@ -80,21 +86,27 @@ public:
         this->timer.TimeScale(timeScale);
     }
 
-    void SetWindowTitle(std::wstring title)
-    {
-        this->window.SetTitle(title);
+    void SetWindowTitle(const std::wstring &title) 
+    { 
+        this->window.SetTitle(title); 
     }
-
-    float GetFontSize() { return this->fontSize; }
-
-    Box GetScreenBounds() { return this->screenBounds; }
-    int GetScreenWidth() { return this->screen.GetWidth(); }
-    int GetScreenHeight() { return this->screen.GetHeight(); }
+    
+    void SetMaxFPS(int maxFPS)
+    {
+        this->FPS = maxFPS < 1 ? 1 : maxFPS;
+    }
 
     Vector2 ScreenMousePosition(const Vector2 &mousePosition) 
     {
         return Vector2(mousePosition.x / fontSize, mousePosition.y / fontSize);
     }
+
+    float GetFontSize() { return this->fontSize; }
+    Box GetScreenBounds() { return this->screenBounds; }
+    int GetScreenWidth() { return this->screen.GetWidth(); }
+    int GetScreenHeight() { return this->screen.GetHeight(); }
+    std::wstring GetWindowTitle() { return this->windowTitle; }
+
 };
  
 void PiXELGraph::Init(int width, int height, int fontSize = 2)
@@ -107,10 +119,14 @@ void PiXELGraph::Init(int width, int height, int fontSize = 2)
     this->window = ConsoleWindow(width, height, this->fontSize, this->fontSize, windowTitle);
     this->screen = Screen(width, height);
 
-    this->screenBounds = Box(0, 0, this->screen.GetWidth() - 1, this->screen.GetHeight() - 1);
+    this->screenWidth = this->screen.GetWidth();
+    this->screenHeight = this->screen.GetHeight();
+
+    this->screenBounds = Box(0, 0, this->screenWidth - 1, this->screenHeight - 1);
 
     this->timer = Timer(this->timeScale);
-    this->input = InputSystem();
+    this->eventSystem = EventSystem(window.GetInputHandle());
+    this->input = InputSystem(window.GetHWNDConsole());
 
     this->running = true;
 }
@@ -121,11 +137,15 @@ void PiXELGraph::Run()
 
     while (running)
     {
-        input.PollInput();
+        if(window.IsFocused())
+        {
+            input.PollInput();
+            eventSystem.PoolEvent(event);
 
-        if(input.isKeyPressed(Keyboard::Key_Delete))
-            CLEAR_CONSOLE
-
+            if(input.isKeyPressed(Keyboard::Key_Delete))
+                CLEAR_CONSOLE
+        }
+        
         timer.Tick();
         if(timer.DeltaTime() >= 1.0 / FPS)
         {
@@ -144,6 +164,4 @@ void PiXELGraph::Run()
 void PiXELGraph::Quit()
 {
     this->running = false;
-
-    // Set the window to the default handle TODO
 }

@@ -137,10 +137,10 @@ class Game : public PiXELGraph
 public:
     Game()
     {
-        this->backgroundColor = Color::White; 
-        this->windowTitle = L"SpaceRocket v1.0";
-        this->timeScale = 1;
-        this->FPS = 99999;
+        SetScreenBackgroundColor(Color::White);
+        SetWindowTitle(L"SpaceRocket v1.0");
+        SetTimeScale(1);
+        SetMaxFPS(60);
 
         Init(1240 / 3, 720 / 3 , 3);
     }
@@ -217,7 +217,7 @@ public:
         frameTimer += deltaTime;
         if(frameTimer >= 1)
         {
-            SetWindowTitle(windowTitle + L" | FPS: " + std::to_wstring(int (1 / deltaTime)) + L" | DT: " + std::to_wstring(deltaTime) + L" MS");
+            SetWindowTitle(GetWindowTitle() + L" | FPS: " + std::to_wstring(int (1 / deltaTime)) + L" | DT: " + std::to_wstring(deltaTime) + L" MS");
             T_FPS.SetString("FPS " + std::to_string(int(1 / deltaTime)));
             frameTimer = 0;
         }
@@ -254,7 +254,7 @@ public:
 
         if(input.isKeyDown(Keyboard::Key_Space))
             boost = true;
-        
+
         direction = screenMousePosition - player->GetTransform().position;
         angle = atan2(direction.y, direction.x);
 
