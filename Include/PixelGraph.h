@@ -76,6 +76,7 @@ private:
 
     void InputLoop();
     void EventLoop();
+
     void HandleError(const std::string& errorMsg);
 public:
     virtual void OnStart() = 0;
@@ -163,6 +164,7 @@ void PiXELGraph::Run()
         inputThread = std::thread(&PiXELGraph::InputLoop, this);
         eventThread = std::thread(&PiXELGraph::EventLoop, this);
 
+        // RUNTIME LOOP
         while (running)
         {
             if(window.IsFocused())
@@ -192,6 +194,7 @@ void PiXELGraph::Run()
     {
         HandleError(e.what());
     }
+    
 }
 
 void PiXELGraph::InputLoop()
@@ -221,6 +224,7 @@ void PiXELGraph::HandleError(const std::string& errorMsg)
     std::cerr << "Error: " << errorMsg << std::endl;
     std::cerr << "Press Enter to exit..." << std::endl;
 
+    this->OnQuit();
     std::cin.get();
     exit(EXIT_FAILURE);
 }
