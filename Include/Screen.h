@@ -1,7 +1,5 @@
 #pragma once
 
-#define CLEAR_CONSOLE std::cout << "\e[2J";
-
 #define RESET_CURSOR_POSITION "\e[H";
 #define RESET_PIXEL = "\e[0m";
 

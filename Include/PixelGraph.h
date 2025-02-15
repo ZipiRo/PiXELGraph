@@ -22,6 +22,8 @@ const int MIN_INT = -2147483647;
 const int MAX_WIDTH = 1920 / 2;
 const int MAX_HEIGHT = 1080 / 2;
 
+#define CLEAR_CONSOLE std::cout << "\e[2J";
+
 #include "ConsoleWindow.h"
 #include "EventSystem.h"
 #include "InputSystem.h"
@@ -47,7 +49,6 @@ class PiXELGraph
 protected:
     InputSystem input;
     Event event;
-
 
     void Init(int width, int height, int fontSize);
 private:
@@ -143,7 +144,7 @@ void PiXELGraph::Run()
             eventSystem.PoolEvent(event);
 
             if(input.isKeyPressed(Keyboard::Key_Delete))
-                CLEAR_CONSOLE
+                CLEAR_CONSOLE;
         }
         
         timer.Tick();
