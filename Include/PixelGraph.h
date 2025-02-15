@@ -87,10 +87,7 @@ public:
     void Run();
     void Quit();
 
-    void SetScreenBackgroundColor(Color color)
-    {
-        this->backgroundColor = color;
-    }
+    void SetScreenBackgroundColor(Color color) { this->backgroundColor = color; }
 
     void SetTimeScale(float timeScale)
     {
@@ -98,10 +95,7 @@ public:
         this->timer.TimeScale(timeScale);
     }
 
-    void SetWindowTitle(const std::wstring &title) 
-    { 
-        this->window.SetTitle(title);
-    }
+    void SetWindowTitle(const std::wstring &title) { this->window.SetTitle(title); }
 
     void SetTitle(const std::wstring &title) { this->windowTitle = title; }
     
@@ -222,7 +216,7 @@ void PiXELGraph::HandleError(const std::string& errorMsg)
     window.ConstructOGConsole();
 
     std::cerr << "Error: " << errorMsg << std::endl;
-    std::cerr << "Press Enter to exit..." << std::endl;
+    std::cerr << "\nPress Enter to exit..." << std::endl;
 
     this->OnQuit();
     std::cin.get();
