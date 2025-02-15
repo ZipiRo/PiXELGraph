@@ -1,23 +1,15 @@
-class ErrorSystem
+#pragma once
+
+class Error : public std::exception
 {
 private:
     std::string message;
 
 public:
-    ErrorSystem() {}
+    explicit Error(const std::string& msg) : message(msg) {}
 
-    void NewError(const std::string &msg)
+    const char* what() const noexcept override
     {
-        this->message = msg;
-    }
-
-    std::string ErrorMessage()
-    {
-        return this->message;
-    }
-
-    bool GetErrors()
-    {
-        return !message.empty();
+        return message.c_str();
     }
 };

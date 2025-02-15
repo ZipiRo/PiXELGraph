@@ -54,8 +54,6 @@ public:
 
     void RandomDirection()
     {
-        srand(time(NULL));
-
         for(int i = 0; i < particleCount; i++)
         {
             int neg = rand() % 2;
@@ -138,11 +136,11 @@ public:
     Game()
     {
         SetScreenBackgroundColor(Color::White);
-        SetWindowTitle(L"SpaceRocket v1.0");
+        SetTitle(L"SpaceRocket v1.0");
         SetTimeScale(1);
         SetMaxFPS(60);
 
-        Init(1240 / 3, 720 / 3 , 3);
+        Init(1240, 720, 4);
     }
 
     struct Projectile
@@ -172,7 +170,7 @@ public:
     {
         screenBounds = GetScreenBounds();
 
-        elipse = Elipse(0, 0, 5, 3);
+        elipse = Elipse(0, 0, 5, 5);
         elipse.SetPivot({0.5, 0.5});
 
         particleSystem = ParticleSystem(50, .4);
@@ -190,6 +188,7 @@ public:
         player->SetFillColor(Color::Red);
         player->SetPivot({0.5, 0.5});
 
+        srand(time(NULL));
     }
 
     bool boost = false;
@@ -222,6 +221,9 @@ public:
             frameTimer = 0;
         }
 
+        if(event == Event::EVENT_MOUSE_MOVE)
+            player->SetFillColor(Color(123, 43, 164));
+
         T_ParticleCount.SetString(std::to_string(bullets.size()));
 
         mousePosition = Vector2(input.GetMousePositionX(), input.GetMousePositionY());
@@ -236,7 +238,7 @@ public:
         if(input.isKeyDown(Keyboard::Key_D))
             player->GetTransform().Move(-player->GetTransform().up * rocketSpeed * deltaTime);
 
-        if(input.isMouseButtonDown(Mouse::Left))
+        if(input.isMouseButtonPressed(Mouse::Left))
         {
             Projectile new_Particle {player->GetTransform().position + player->GetTransform().right * 10, 
                                 player->GetTransform().right, 50, 
@@ -251,6 +253,9 @@ public:
             player->SetFillColor(Color::LightBlue);
             slowmo = true;
         }
+
+        if(player->GetBoundingBox().right > screenBounds.right)
+            throw Error("Player is too far!");
 
         if(input.isKeyDown(Keyboard::Key_Space))
             boost = true;

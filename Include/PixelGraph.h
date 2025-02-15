@@ -4,7 +4,8 @@
 #include <fstream>
 #include <cmath>
 #include <string>
-#include <map>
+#include <thread>
+#include <atomic>
 #include <unordered_map>
 #include <chrono>
 #include <vector>
@@ -19,8 +20,10 @@ namespace winapi
 const int MAX_INT = 2147483647;
 const int MIN_INT = -2147483647;
 
-const int MAX_WIDTH = 1920 / 2;
-const int MAX_HEIGHT = 1080 / 2;
+const int MAX_PIXELSIZE = 2;
+
+const int MAX_WIDTH = 1920 / MAX_PIXELSIZE;
+const int MAX_HEIGHT = 1080 / MAX_PIXELSIZE;
 
 #include "ErrorSystem.h"
 
@@ -47,11 +50,10 @@ const int MAX_HEIGHT = 1080 / 2;
 class PiXELGraph
 {
 protected:
-    ErrorSystem errorSystem;
     InputSystem input;
     Event event;
 
-    void Init(int width, int height, int fontSize);
+    void Init(int width, int height, int pixelSize);
 private:
     Color backgroundColor = Color::White;
     std::wstring windowTitle = L"Demo";
@@ -66,8 +68,16 @@ private:
     Box screenBounds;
     int screenWidth;
     int screenHeight;
-    int fontSize;
-    bool running;
+    int pixelSize;
+    
+    std::atomic<bool> running{false};
+    std::thread inputThread;
+    std::thread eventThread;
+
+    void InputLoop();
+    void EventLoop();
+
+    void HandleError(const std::string& errorMsg);
 public:
     virtual void OnStart() = 0;
     virtual void OnUpdate(float deltaTime) = 0;
@@ -90,8 +100,10 @@ public:
 
     void SetWindowTitle(const std::wstring &title) 
     { 
-        this->window.SetTitle(title); 
+        this->window.SetTitle(title);
     }
+
+    void SetTitle(const std::wstring &title) { this->windowTitle = title; }
     
     void SetMaxFPS(int maxFPS)
     {
@@ -100,20 +112,10 @@ public:
 
     Vector2 ScreenMousePosition(const Vector2 &mousePosition) 
     {
-        return Vector2(mousePosition.x / fontSize, mousePosition.y / fontSize);
+        return Vector2(mousePosition.x / pixelSize, mousePosition.y / pixelSize);
     }
 
-    void INITOGConsole()
-    {
-        window.ConstructOGConsole();
-    }
-    
-    void INITNormalConsole()
-    {
-        window.ConstructConsole();
-    }
-
-    float GetFontSize() { return this->fontSize; }
+    float GetPixelSize() { return this->pixelSize; }
     Box GetScreenBounds() { return this->screenBounds; }
     int GetScreenWidth() { return this->screen.GetWidth(); }
     int GetScreenHeight() { return this->screen.GetHeight(); }
@@ -121,64 +123,110 @@ public:
 
 };
  
-void PiXELGraph::Init(int width, int height, int fontSize = 2)
+void PiXELGraph::Init(int width, int height, int pixelSize)
 {
-    this->fontSize = fontSize < 2 ? 2 : fontSize;
-    
-    width = (width > MAX_WIDTH) ? MAX_WIDTH : width;
-    height = (height > MAX_HEIGHT) ? MAX_HEIGHT : height;
+    try
+    {
+        this->pixelSize = pixelSize < MAX_PIXELSIZE ? MAX_PIXELSIZE : pixelSize;
+        
+        width /= this->pixelSize;
+        height /= this->pixelSize;
 
-    this->window = ConsoleWindow(width, height, this->fontSize, this->fontSize, windowTitle);
-    this->screen = Screen(width, height);
+        width = (width > MAX_WIDTH) ? MAX_WIDTH : width;
+        height = (height > MAX_HEIGHT) ? MAX_HEIGHT : height;
 
-    this->screenWidth = this->screen.GetWidth();
-    this->screenHeight = this->screen.GetHeight();
+        this->window = ConsoleWindow(width, height, this->pixelSize, this->pixelSize, windowTitle);
+        this->screen = Screen(width, height);
 
-    this->screenBounds = Box(0, 0, this->screenWidth - 1, this->screenHeight - 1);
+        this->screenWidth = this->screen.GetWidth();
+        this->screenHeight = this->screen.GetHeight();
 
-    this->timer = Timer(this->timeScale);
-    this->eventSystem = EventSystem(window.GetInputHandle());
-    this->input = InputSystem(window.GetHWNDConsole());
+        this->screenBounds = Box(0, 0, this->screenWidth, this->screenHeight);
 
-    this->running = true;
+        this->timer = Timer(this->timeScale);
+        this->eventSystem = EventSystem(window.GetInputHandle());
+        this->input = InputSystem(window.GetHWNDConsole());
+
+        this->running = true;
+    }
+    catch(const std::exception& e)
+    {
+        HandleError(e.what());
+    }
 }
 
 void PiXELGraph::Run()
 {
-    this->OnStart();
+    try
+    {
+        this->OnStart();
 
+        inputThread = std::thread(&PiXELGraph::InputLoop, this);
+        eventThread = std::thread(&PiXELGraph::EventLoop, this);
+
+        // RUNTIME LOOP
+        while (running)
+        {
+            if(window.IsFocused())
+            {
+                if(input.isKeyPressed(Keyboard::Key_Delete))
+                    CLEAR_CONSOLE;
+            }
+            
+            timer.Tick();
+            if(timer.DeltaTime() >= 1.0 / FPS)
+            {
+                timer.Reset();
+                this->OnUpdate(timer.DeltaTime());
+            }
+
+            screen.Clear(backgroundColor);
+            this->OnDraw(screen);
+            screen.Display();
+        }
+
+        this->OnQuit();
+
+        if (inputThread.joinable()) inputThread.join();
+        if (eventThread.joinable()) eventThread.join();   
+    }
+    catch(const std::exception& e)
+    {
+        HandleError(e.what());
+    }
+    
+}
+
+void PiXELGraph::InputLoop()
+{
     while (running)
     {
-        if(window.IsFocused())
-        {
-            input.PollInput();
-            eventSystem.PoolEvent(event);
-
-            if(input.isKeyPressed(Keyboard::Key_Delete))
-                CLEAR_CONSOLE;
-        }
-        
-        timer.Tick();
-        if(timer.DeltaTime() >= 1.0 / FPS)
-        {
-            timer.Reset();
-            this->OnUpdate(timer.DeltaTime());
-        }
-
-        screen.Clear(backgroundColor);
-        this->OnDraw(screen);
-        screen.Display();
-
-        if(errorSystem.GetErrors())
-        {
-            INITOGConsole();
-            std::cout << errorSystem.ErrorMessage() << '\n';
-            std::system("pause");
-            Quit();
-        }
+        if(!window.IsFocused()) continue;
+        input.PollInput();
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
+}
+
+void PiXELGraph::EventLoop()
+{
+    while (running)
+    {
+        if(!window.IsFocused()) continue;
+        eventSystem.PoolEvent(event);
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }   
+}
+
+void PiXELGraph::HandleError(const std::string& errorMsg)
+{
+    window.ConstructOGConsole();
+
+    std::cerr << "Error: " << errorMsg << std::endl;
+    std::cerr << "Press Enter to exit..." << std::endl;
 
     this->OnQuit();
+    std::cin.get();
+    exit(EXIT_FAILURE);
 }
 
 void PiXELGraph::Quit()

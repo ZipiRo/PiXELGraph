@@ -15,6 +15,7 @@ private:
 
     std::wstring ConsoleTitle;
 
+    void ConstructConsole();
 public:
     ConsoleWindow() {}
     ConsoleWindow(int width, int height, int fontWidth, int fontHeight, const std::wstring &title)
@@ -32,7 +33,7 @@ public:
 
         this->ConsoleTitle = title;
 
-        if(!ConstructConsole());
+        ConstructConsole();
     }
 
     winapi::HANDLE GetOutputHandle();
@@ -52,14 +53,13 @@ public:
         winapi::SetConsoleTitleW(s);
     }
 
-    bool ConstructConsole();
     void ConstructOGConsole();
 };
 
-bool ConsoleWindow::ConstructConsole()
+void ConsoleWindow::ConstructConsole()
 {
     if(ConsoleOutputHandle == ((winapi::HANDLE) (winapi::LONG_PTR)-1))
-        return 0;
+    { throw Error("Bad Handle"); return; }
 
     winapi::SMALL_RECT WindowRect;
 
@@ -80,9 +80,11 @@ bool ConsoleWindow::ConstructConsole()
     SetConsoleWindowInfo(ConsoleOutputHandle, TRUE, &WindowRect);
 
     winapi::COORD coord = {(short)ConsoleScreenWidth, (short)ConsoleScreenHeight};
-    if(!winapi::SetConsoleScreenBufferSize(ConsoleOutputHandle, coord)) return 0;
+    if(!winapi::SetConsoleScreenBufferSize(ConsoleOutputHandle, coord))
+    { throw Error("SetConsoleScreenBufferSize"); return; }
 
-    if(!winapi::SetConsoleActiveScreenBuffer(ConsoleOutputHandle)) return 0;
+    if(!winapi::SetConsoleActiveScreenBuffer(ConsoleOutputHandle))
+    { throw Error("SetConsoleActiveScreenBuffer"); return; }
 
     winapi::CONSOLE_FONT_INFOEX consoleFontInfo;
     consoleFontInfo.cbSize = sizeof(consoleFontInfo);
@@ -93,7 +95,18 @@ bool ConsoleWindow::ConstructConsole()
     consoleFontInfo.FontWeight = FW_NORMAL;
 
     wcscpy(consoleFontInfo.FaceName, L"Consolas"); 
-    if(!winapi::SetCurrentConsoleFontEx(ConsoleOutputHandle, FALSE, &consoleFontInfo)) return 0;
+    if(!winapi::SetCurrentConsoleFontEx(ConsoleOutputHandle, FALSE, &consoleFontInfo))
+    { throw Error("SetCurrentConsoleFontEx"); return; }
+
+    winapi::CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (!winapi::GetConsoleScreenBufferInfo(ConsoleOutputHandle, &csbi))
+    { throw Error("GetConsoleScreenBufferInfo"); return; }
+
+    if (ConsoleScreenHeight > csbi.dwMaximumWindowSize.Y)
+    { throw Error("Screen Height / Font Height Too Big"); return; }
+    
+    if (ConsoleScreenWidth> csbi.dwMaximumWindowSize.X)
+    { throw Error("Screen Width / Font Width Too Big"); return; }
 
     winapi::LONG style = winapi::GetWindowLong(this->HWNDConsole, GWL_STYLE);
     style &= ~(WS_SIZEBOX | WS_MAXIMIZEBOX);
@@ -104,9 +117,8 @@ bool ConsoleWindow::ConstructConsole()
     SetTitle(ConsoleTitle);
     
     WindowRect = {0, 0, (short)(ConsoleScreenWidth - 1), (short)(ConsoleScreenHeight - 1)};
-    if(winapi::SetConsoleWindowInfo(ConsoleOutputHandle, TRUE, &WindowRect)) return 0;
-
-    return 1;
+    if(!winapi::SetConsoleWindowInfo(ConsoleOutputHandle, TRUE, &WindowRect)) 
+    { throw Error("SetConsoleWindowInfo"); return;}
 }
 
 void ConsoleWindow::ConstructOGConsole()
