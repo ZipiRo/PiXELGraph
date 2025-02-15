@@ -194,7 +194,6 @@ void PiXELGraph::Run()
     {
         HandleError(e.what());
     }
-    
 }
 
 void PiXELGraph::InputLoop()
