@@ -15,8 +15,6 @@ private:
 
     std::wstring ConsoleTitle;
 
-    bool ConstructConsole();
-
 public:
     ConsoleWindow() {}
     ConsoleWindow(int width, int height, int fontWidth, int fontHeight, const std::wstring &title)
@@ -54,6 +52,7 @@ public:
         winapi::SetConsoleTitleW(s);
     }
 
+    bool ConstructConsole();
     void ConstructOGConsole();
 };
 
@@ -112,15 +111,18 @@ bool ConsoleWindow::ConstructConsole()
 
 void ConsoleWindow::ConstructOGConsole()
 {
+    std::system("cls");
     winapi::SMALL_RECT WindowRect;
     
     winapi::DWORD ConsoleMode = 0;
-    if (winapi::GetConsoleMode(ConsoleOutputHandle, &ConsoleMode)) {
+    if (winapi::GetConsoleMode(ConsoleOutputHandle, &ConsoleMode)) 
+    {
         ConsoleMode &= ~ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         winapi::SetConsoleMode(ConsoleOutputHandle, ConsoleMode);
     }
 
-    if (winapi::GetConsoleMode(ConsoleInputHandle, &ConsoleMode)) {
+    if (winapi::GetConsoleMode(ConsoleInputHandle, &ConsoleMode)) 
+    {
         ConsoleMode |= ENABLE_QUICK_EDIT_MODE;
         winapi::SetConsoleMode(ConsoleInputHandle, ConsoleMode);
     }
@@ -152,8 +154,6 @@ void ConsoleWindow::ConstructOGConsole()
 
     winapi::COORD cursorPosition = {0, 0};
     winapi::SetConsoleCursorPosition(ConsoleOutputHandle, cursorPosition);
-
-    CLEAR_CONSOLE;
 }
 
 winapi::HANDLE ConsoleWindow::GetOutputHandle()

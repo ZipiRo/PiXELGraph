@@ -22,7 +22,7 @@ const int MIN_INT = -2147483647;
 const int MAX_WIDTH = 1920 / 2;
 const int MAX_HEIGHT = 1080 / 2;
 
-#define CLEAR_CONSOLE std::cout << "\e[2J";
+#include "ErrorSystem.h"
 
 #include "ConsoleWindow.h"
 #include "EventSystem.h"
@@ -47,6 +47,7 @@ const int MAX_HEIGHT = 1080 / 2;
 class PiXELGraph
 {
 protected:
+    ErrorSystem errorSystem;
     InputSystem input;
     Event event;
 
@@ -100,6 +101,16 @@ public:
     Vector2 ScreenMousePosition(const Vector2 &mousePosition) 
     {
         return Vector2(mousePosition.x / fontSize, mousePosition.y / fontSize);
+    }
+
+    void INITOGConsole()
+    {
+        window.ConstructOGConsole();
+    }
+    
+    void INITNormalConsole()
+    {
+        window.ConstructConsole();
     }
 
     float GetFontSize() { return this->fontSize; }
@@ -157,6 +168,14 @@ void PiXELGraph::Run()
         screen.Clear(backgroundColor);
         this->OnDraw(screen);
         screen.Display();
+
+        if(errorSystem.GetErrors())
+        {
+            INITOGConsole();
+            std::cout << errorSystem.ErrorMessage() << '\n';
+            std::system("pause");
+            Quit();
+        }
     }
 
     this->OnQuit();
