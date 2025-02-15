@@ -170,7 +170,7 @@ public:
     {
         screenBounds = GetScreenBounds();
 
-        elipse = Elipse(0, 0, 5, 3);
+        elipse = Elipse(0, 0, 5, 5);
         elipse.SetPivot({0.5, 0.5});
 
         particleSystem = ParticleSystem(50, .4);
